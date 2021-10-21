@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <netdb.h>
-#include "common_message.h"
+#include "common_packet.h"
 
 #define INVALID_FILE_DESCRIPTOR -1
 #define RECV_BUFFER_SIZE 30
@@ -34,11 +34,11 @@ public:
 
     void bindAndListen(const char *port, uint8_t pend_conn);
 
-    Socket accept();
+    Socket accept() const;
 
-    size_t send(Message &msg) const;
+    size_t send(Packet & packet) const;
 
-    size_t receive(Message &msg, size_t size) const;
+    size_t receive(Packet & packet, size_t size) const;
 };
 
 

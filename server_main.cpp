@@ -1,22 +1,15 @@
 #include <iostream>
 #include "common_socket.h"
+#include "common_server.h"
 
 
 int main(int argc, char * argv[]) {
-    Socket socket;
-    Socket peer;
 
     try {
-        socket.bindAndListen(argv[1], 8);
-        peer = socket.accept();
+        Server server;
+        server.execute(argv[1]);
     }
-    catch(std::exception & e){
-        std::cerr << e.what() << std::endl;
+    catch (const std::exception & e){
+        std::cerr << "Error: " << e.what() << std::endl;
     }
-
-    Message msg;
-
-    peer.receive(msg, 10);
-
-    msg.print();
 }

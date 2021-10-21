@@ -1,25 +1,26 @@
 #include <cstring>
 #include <iostream>
-#include "common_message.h"
+#include "common_packet.h"
 
 // TODO ver como hacer con el size_ (usar el del vector??)
 // TODO constructor con tamanio?
 
 Packet::Packet(): array(0), sent_(0), read_(0), size_(0) {}
 
-void Packet::getBytes(std::string & out, const size_t & size) {
+void Packet::getBytes(std::string & out, const uint32_t & size) {
     if((size_ - read_) < size)
         throw std::invalid_argument("se piden mas bytes que los existentes");
-    out = std::string(array.begin(), array.begin() + size);
+    out = std::string(array.begin() + read_, array.begin() + read_ + size);
 }
 
 void Packet::getBytes(uint16_t & out){
     if((size_ - read_) < 2)
         throw std::invalid_argument("se piden mas bytes que los existentes");
-    out = getByte() * 256 + getByte();
+    char bytes [] = {getByte(), getByte()};
+    out = (bytes[1] << 8) + bytes[0];
 }
 
-void Packet::addBytes(char * bytes, const size_t & size) {
+void Packet::addBytes(char * bytes, const uint32_t & size) {
     size_t i = 0;
     for(; i < size; i++){
         array.push_back(bytes[i]);
@@ -40,32 +41,31 @@ void Packet::addBytes(const uint16_t &bytes) {
     addBytes(bytes_, 2);
 }
 
-void Packet::addSentAmmount(const size_t &sent) {
+void Packet::addSentAmount(const size_t &sent) {
     sent_ += sent;
 }
 
-size_t Packet::pendingToSentSize() const {
+uint32_t Packet::pendingToSentSize() const {
     return size_ - sent_;
 }
 
-size_t Packet::sent() const {
+uint32_t Packet::sent() const {
     return sent_;
 }
 
-size_t Packet::read() const{
+uint32_t Packet::read() const{
     return read_;
 }
 
-void Packet::getPendingToSent(char * buffer, const size_t & size) {
-    for(size_t i = 0; (i + sent_) < size_ && i < size; i++){
-        buffer[i] = array[i + sent_];
-    }
+const char * Packet::getPendingToSent() const {
+    return array.data() + sent_;
 }
 
 void Packet::reset() {
     size_ = 0;
     sent_ = 0;
     read_ = 0;
+    array.erase(array.begin(), array.end());
 }
 
 void Packet::resetSent() {
@@ -76,7 +76,7 @@ void Packet::resetRead() {
     read_ = 0;
 }
 
-size_t Packet::size() {
+uint32_t Packet::size() {
     return size_;
 }
 
@@ -95,6 +95,7 @@ void Packet::addByte(char byte){
     array.push_back(byte);
     size_++;
 }
+
 
 
 

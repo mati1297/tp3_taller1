@@ -1,5 +1,4 @@
 #include "common_socket.h"
-#include "common_message.h"
 #include <iostream>
 #include <sys/socket.h>
 #include <cstring>
@@ -7,6 +6,10 @@
 #include <netdb.h>
 #include <exception>
 #include <stdexcept>
+#include "common_packet.h"
+#include "socket_closed.h"
+
+// TODO cambiar excepciones que correspondan por excepciones personalizadas
 
 Socket::Socket(): fd(INVALID_FILE_DESCRIPTOR) {}
 
@@ -22,19 +25,14 @@ Socket & Socket::operator=(Socket &&orig) {
 
 Socket::~Socket() {
     if(fd != INVALID_FILE_DESCRIPTOR) {
-        close(fd);
+        ::close(fd);
         fd = INVALID_FILE_DESCRIPTOR;
     }
 }
 
 void Socket::connect(const char * host, const char * port) {
     struct addrinfo * result, * ptr;
-    try {
-        getAddressInfo(&result, host, port);
-    }
-    catch(std::exception & e) {
-        throw;
-    }
+    getAddressInfo(&result, host, port);
 
     for(ptr = result; ptr; ptr = ptr->ai_next){
         int skt = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
@@ -59,15 +57,14 @@ void Socket::connect(const char * host, const char * port) {
 void Socket::bindAndListen(const char * port, uint8_t pend_conn) {
     struct addrinfo * result, * ptr;
 
-    try {
-        getAddressInfo(&result, nullptr, port);
-    }
-    catch(std::exception & e){
-        throw;
-    }
+    getAddressInfo(&result, nullptr, port);
+
     for(ptr = result; ptr; ptr = ptr->ai_next) {
         int skt = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
         if(skt != -1){
+            int optval = 1;
+            if(setsockopt(skt, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) < 0);
+                // TODO validar
             if(::bind(skt, result->ai_addr, result->ai_addrlen)) {
                 close(skt);
             } else{
@@ -81,14 +78,11 @@ void Socket::bindAndListen(const char * port, uint8_t pend_conn) {
     if (fd == INVALID_FILE_DESCRIPTOR)
         throw std::runtime_error("fallo al bindear el socket");
 
-    int optval = 1;
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int));
-
     if (listen(fd, pend_conn))
         throw std::runtime_error("fallo al poner el puerto en escucha");
 }
 
-Socket Socket::accept() {
+Socket Socket::accept() const {
     int fd_peer = ::accept(fd, nullptr, nullptr);
     if (fd_peer == -1)
         throw std::runtime_error("fallo al aceptar a peer");
@@ -103,7 +97,7 @@ void Socket::getAddressInfo(struct addrinfo ** result, const char * host,
     ::memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
-    if (host == NULL)
+    if (host == nullptr)
         hints.ai_flags = AI_PASSIVE;
     int s = getaddrinfo(host, port, &hints, result);
     if (s) {
@@ -112,33 +106,35 @@ void Socket::getAddressInfo(struct addrinfo ** result, const char * host,
     }
 }
 
-size_t Socket::send(Message & msg) const {
-    while (msg.pendingToSentSize() > 0) {
-        char buffer[RECV_BUFFER_SIZE];
-        msg.getPendingToSent(buffer, RECV_BUFFER_SIZE);
-        ssize_t bytes_sent = ::send(fd, buffer,
-                                    msg.pendingToSentSize(), MSG_NOSIGNAL);
+size_t Socket::send(Packet & packet) const {
+    while (packet.pendingToSentSize() > 0) {
+        ssize_t bytes_sent = ::send(fd, packet.getPendingToSent(),
+                                    packet.pendingToSentSize(), MSG_NOSIGNAL);
         if (bytes_sent == 0)
-            break;
+            throw SocketClosed();
         if (bytes_sent == -1)
             throw std::runtime_error("error al enviar datos");
-        msg.addSentAmmount(bytes_sent);
+        packet.addSentAmount(bytes_sent);
     }
-    return msg.sent();
+    return packet.sent();
 }
 
-size_t Socket::receive(Message & msg, size_t size) const{
-    msg.reset();
-    while(msg.size() < size) {
-        char buffer[RECV_BUFFER_SIZE];
-        ssize_t bytes_recv = recv(fd, buffer, RECV_BUFFER_SIZE, 0);
-        if(bytes_recv == 0)
-            break;
+size_t Socket::receive(Packet & packet, size_t size) const{
+    std::vector<char> buffer(size);
+    while(packet.size() < size) {
+        // TODO ver si hacer refactor de esto o dejarlo asi (tema encapsulamiento).
+        ssize_t bytes_recv = recv(fd, buffer.data(), buffer.size(), 0);
+        if(bytes_recv == 0) {
+            std::cout << "aca" << std::endl;
+            throw SocketClosed();
+        }
         if(bytes_recv == -1)
             throw std::runtime_error("error al recibir datos");
-        msg.addBytes(buffer, bytes_recv);
+        // TODO hacer que reciba vector?
+        packet.addBytes(buffer.data(), bytes_recv);
+        buffer.resize(buffer.size() - bytes_recv);
     }
-    return msg.size();
+    return packet.size();
 }
 
 Socket::Socket(int fd_): fd(fd_) {}
