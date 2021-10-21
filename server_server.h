@@ -6,10 +6,11 @@
 #include <map>
 #include "server_blocking_queue.h"
 #include "common_protocol.h"
+#include "server_protected_map.h"
 
 class Server {
     // TODO Hacerle monitor a esto.
-    std::map<std::string, BlockingQueue<std::string>> queues;
+    ProtectedMap<std::string, BlockingQueue<std::string>> queues;
 
 
 public:
