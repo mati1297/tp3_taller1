@@ -65,7 +65,6 @@ void Protocol::receivePushMessage(Server & server, Packet & packet){
     std::string queue_name, message;
 
     queue_name = receiveAndUnpackText();
-    std::cout << queue_name << std::endl;
     message = receiveAndUnpackText();
 
     server.pushMessage(queue_name, message);

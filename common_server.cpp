@@ -23,7 +23,9 @@ void Server::popMessage(Protocol & protocol, const std::string &queue_name) {
         protocol.sendMessage(queues.at(queue_name).pop());
     }
     catch (const std::out_of_range & e) {
+        // TODO PASAR ESTO AL HILO DEL HILO
         protocol.sendMessage("");
+        std::cerr << "Se intento popear de una cola inexistente: '" << queue_name << "'" << std::endl;
     }
 }
 
@@ -32,7 +34,10 @@ void Server::pushMessage(const std::string &queue_name, const std::string &messa
     try {
         queues.at(queue_name).push(message);
     }
-    catch (const std::out_of_range & e) {}
+    catch (const std::out_of_range & e) {
+        // TODO PASAR ESTO AL HILO DEL HILO
+        std::cerr << "Se intento pushear en una cola inexistente: '" << queue_name << "' el mensaje '" << message << "'" << std::endl;
+    }
 }
 
 void Server::defineQueue(const std::string &queue_name) {
