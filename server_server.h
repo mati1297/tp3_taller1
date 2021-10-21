@@ -1,13 +1,11 @@
-#ifndef TP3_TALLER1_COMMON_SERVER_H
-#define TP3_TALLER1_COMMON_SERVER_H
+#ifndef TP3_TALLER1_SERVER_SERVER_H
+#define TP3_TALLER1_SERVER_SERVER_H
 
 
 #include <string>
 #include <map>
 #include "server_blocking_queue.h"
 #include "common_protocol.h"
-
-class Protocol;
 
 class Server {
     // TODO Hacerle monitor a esto.
@@ -28,4 +26,4 @@ public:
 };
 
 
-#endif //TP3_TALLER1_COMMON_SERVER_H
+#endif //TP3_TALLER1_SERVER_SERVER_H

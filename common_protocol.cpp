@@ -3,7 +3,6 @@
 #include <iostream>
 #include "common_protocol.h"
 #include "common_socket.h"
-#include "common_server.h"
 #include "common_packet.h"
 
 Protocol::Protocol(const Socket & socket_): socket(socket_) {}
@@ -33,49 +32,30 @@ void Protocol::sendPopMessage(const std::string & queue_name) const {
     socket.send(packet);
 }
 
-void Protocol::receive(Server & server) {
+Protocol::Command Protocol::receive(std::string & queue_name, std::string & message) {
     Packet packet;
 
     socket.receive(packet, 1);
 
     switch(packet.getByte()) {
         case DEFINE_QUEUE_CHAR:
-            receiveDefineQueue(server, packet);
+            queue_name = receiveAndUnpackText();
+            return DEFINE_QUEUE;
             break;
         case PUSH_CHAR:
-            receivePushMessage(server, packet);
+            queue_name = receiveAndUnpackText();
+            message = receiveAndUnpackText();
+            return PUSH;
             break;
         case POP_CHAR:
-            receivePopMessage(server, packet);
+            queue_name = receiveAndUnpackText();
+            return POP;
             break;
         default:
+            queue_name = "";
+            return NO_CMD;
             break;
     }
-}
-
-void Protocol::receiveDefineQueue(Server & server, Packet & packet) {
-    std::string queue_name;
-
-    queue_name = receiveAndUnpackText();
-
-    server.defineQueue(queue_name);
-}
-
-void Protocol::receivePushMessage(Server & server, Packet & packet){
-    std::string queue_name, message;
-
-    queue_name = receiveAndUnpackText();
-    message = receiveAndUnpackText();
-
-    server.pushMessage(queue_name, message);
-}
-
-void Protocol::receivePopMessage(Server & server, Packet & packet){
-    std::string queue_name;
-
-    queue_name = receiveAndUnpackText();
-
-    server.popMessage(*this, queue_name);
 }
 
 void Protocol::sendMessage(const std::string & message) {

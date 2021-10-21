@@ -1,9 +1,14 @@
 #include <iostream>
 #include "common_socket.h"
-#include "common_server.h"
+#include "server_server.h"
 
+#define ARGUMENTS_SIZE 1
 
 int main(int argc, char * argv[]) {
+    if(argc != ARGUMENTS_SIZE + 1){
+        std::cerr << "Error: la cantidad de argumentos debe ser " << ARGUMENTS_SIZE << std::endl;
+        return EXIT_FAILURE;
+    }
 
     try {
         Server server;

@@ -2,18 +2,22 @@
 #define TP3_TALLER1_COMMON_PROTOCOL_H
 
 #include "common_socket.h"
-#include "common_server.h"
 
 #define DEFINE_QUEUE_CHAR 'd'
 #define PUSH_CHAR 'u'
 #define POP_CHAR 'o'
 
-class Server;
-
 class Protocol {
     const Socket & socket;
 
 public:
+    typedef enum {
+        DEFINE_QUEUE,
+        PUSH,
+        POP,
+        NO_CMD
+    } Command;
+
     explicit Protocol(const Socket & socket_);
 
     Protocol(const Protocol &) = delete;
@@ -30,19 +34,13 @@ public:
 
     void sendPopMessage(const std::string &queue_name) const;
 
-    void receive(Server & server);
+    Command receive(std::string & queue_name, std::string & message);
 
     void packText(Packet & packet, const std::string &message) const;
 
     void sendMessage(const std::string & message);
 
     std::string receiveAndUnpackText() const;
-
-    void receivePopMessage(Server &server, Packet &packet);
-
-    void receiveDefineQueue(Server &server, Packet &packet);
-
-    void receivePushMessage(Server &server, Packet &packet);
 };
 
 

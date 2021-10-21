@@ -1,4 +1,4 @@
-#include "common_server.h"
+#include "server_server.h"
 #include <string>
 #include <iostream>
 #include "common_protocol.h"
@@ -11,8 +11,26 @@ void Server::execute(const char * port) {
     Socket peer = socket.accept();
     Protocol protocol(peer);
 
-    while(true)
-        protocol.receive(*this);
+    std::string queue_name;
+    std::string message;
+    Protocol::Command cmd;
+
+    while(true) {
+        cmd = protocol.receive(queue_name, message);
+        switch(cmd) {
+            case Protocol::DEFINE_QUEUE:
+                defineQueue(queue_name);
+                break;
+            case Protocol::PUSH:
+                pushMessage(queue_name, message);
+                break;
+            case Protocol::POP:
+                popMessage(protocol, queue_name);
+                break;
+            case Protocol::NO_CMD:
+                break;
+        }
+    }
 
 
 }
