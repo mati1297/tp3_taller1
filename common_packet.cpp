@@ -2,21 +2,24 @@
 #include <iostream>
 #include "common_message.h"
 
-Message::Message(): array(0), sent_(0), read_(0), size_(0) {}
+// TODO ver como hacer con el size_ (usar el del vector??)
+// TODO constructor con tamanio?
 
-void Message::getBytes(std::vector<char> & out, const size_t & size) {
+Packet::Packet(): array(0), sent_(0), read_(0), size_(0) {}
+
+void Packet::getBytes(std::string & out, const size_t & size) {
     if((size_ - read_) < size)
         throw std::invalid_argument("se piden mas bytes que los existentes");
-    out = std::vector<char>(array.begin(), array.begin() + size);
+    out = std::string(array.begin(), array.begin() + size);
 }
 
-void Message::getBytes(uint16_t & out){
+void Packet::getBytes(uint16_t & out){
     if((size_ - read_) < 2)
         throw std::invalid_argument("se piden mas bytes que los existentes");
-
+    out = getByte() * 256 + getByte();
 }
 
-void Message::addBytes(char * bytes, const size_t & size) {
+void Packet::addBytes(char * bytes, const size_t & size) {
     size_t i = 0;
     for(; i < size; i++){
         array.push_back(bytes[i]);
@@ -24,7 +27,7 @@ void Message::addBytes(char * bytes, const size_t & size) {
     size_ += i;
 }
 
-void Message::addBytes(const std::string &bytes) {
+void Packet::addBytes(const std::string &bytes) {
     size_t i = 0;
     for(; i < bytes.size(); i++){
         array.push_back(bytes[i]);
@@ -32,64 +35,63 @@ void Message::addBytes(const std::string &bytes) {
     size_ += i;
 }
 
-void Message::addBytes(const uint16_t &bytes) {
-    array.push_back((char) (bytes));
-    array.push_back((char) (bytes >> 8));
-    size_ += 2;
+void Packet::addBytes(const uint16_t &bytes) {
+    char * bytes_ = (char*) &bytes;
+    addBytes(bytes_, 2);
 }
 
-void Message::addSentAmmount(const size_t &sent) {
+void Packet::addSentAmmount(const size_t &sent) {
     sent_ += sent;
 }
 
-size_t Message::pendingToSentSize() const {
+size_t Packet::pendingToSentSize() const {
     return size_ - sent_;
 }
 
-size_t Message::sent() const {
+size_t Packet::sent() const {
     return sent_;
 }
 
-size_t Message::read() const{
+size_t Packet::read() const{
     return read_;
 }
 
-void Message::getPendingToSent(char * buffer, const size_t & size) {
+void Packet::getPendingToSent(char * buffer, const size_t & size) {
     for(size_t i = 0; (i + sent_) < size_ && i < size; i++){
         buffer[i] = array[i + sent_];
     }
 }
 
-void Message::reset() {
+void Packet::reset() {
     size_ = 0;
     sent_ = 0;
     read_ = 0;
 }
 
-void Message::resetSent() {
+void Packet::resetSent() {
     sent_ = 0;
 }
 
-void Message::resetRead() {
+void Packet::resetRead() {
     read_ = 0;
 }
 
-size_t Message::size() {
+size_t Packet::size() {
     return size_;
 }
 
-void Message::print() {
+void Packet::print() {
     for(size_t i = 0; i < size_; i++){
         std::cout << array[i];
     }
     std::cout << std::endl;
 }
 
-char Message::getByte() {
+char Packet::getByte() {
     return array[read_++];
 }
 
-void Message::addByte(char byte){
+void Packet::addByte(char byte){
     array.push_back(byte);
     size_++;
 }

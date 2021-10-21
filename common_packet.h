@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-class Message {
+class Packet {
 private:
     std::vector<char> array;
     size_t sent_;
@@ -12,7 +12,7 @@ private:
     size_t size_;
 
 public:
-    Message();
+    Packet();
 
     // TODO copia y eso
 
@@ -46,7 +46,7 @@ public:
 
     void addByte(char byte);
 
-    void getBytes(std::vector<char> &out, const size_t &size);
+    void getBytes(std::string &out, const size_t &size);
 
     void getBytes(uint16_t &out);
 };

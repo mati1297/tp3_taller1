@@ -25,16 +25,14 @@ BlockingQueue<T>::BlockingQueue(): queue(), mutex(), cv() {}
 
 template <class T>
 void BlockingQueue<T>::push(const T & new_element) {
-	{
-		std::unique_lock<std::mutex> lock(mutex);
-		queue.push(new_element);
-	}
+    std::unique_lock<std::mutex> u_lock(mutex);
+    queue.push(new_element);
 	cv.notify_one();
 }
 
 template <class T>
 T BlockingQueue<T>::pop() {
-	std::unique_lock<std::mutex> lock(mutex);
+	std::unique_lock<std::mutex> u_lock(mutex);
 	cv.wait(lock, [=] {
 		return !this->queue.empty();
 	});
