@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <string>
+#include <utility>
 #include "server_acceptor_thread.h"
 #include "socket_closed.h"
 
@@ -25,7 +26,7 @@ void AcceptorThread::operator()() {
 
             clients.insert(clients.end(),
                            std::move(ClientThread(std::move(peer), queues)));
-            if(!clients.empty())
+            if (!clients.empty())
                 threads.insert(threads.end(),
                             std::thread(std::ref(clients.back())));
             else
