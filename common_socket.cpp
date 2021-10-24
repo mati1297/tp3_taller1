@@ -7,7 +7,7 @@
 #include <vector>
 #include <stdexcept>
 #include "common_packet.h"
-#include "socket_closed.h"
+#include "common_socket_closed.h"
 
 // TODO cambiar excepciones que correspondan por excepciones personalizadas
 // TODO PROTEGER CLASE

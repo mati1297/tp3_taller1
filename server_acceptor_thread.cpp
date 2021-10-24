@@ -3,7 +3,7 @@
 #include <string>
 #include <utility>
 #include "server_acceptor_thread.h"
-#include "socket_closed.h"
+#include "common_socket_closed.h"
 
 AcceptorThread::AcceptorThread(const Socket &socket_, ProtectedMap<std::string,
         BlockingQueue<std::string>> & queues_): socket(socket_), clients(),

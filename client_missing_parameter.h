@@ -1,4 +1,4 @@
-#ifndef TP3_TALLER1_SOCKET_CLOSED_H
+#ifndef TP3_TALLER1_COMMON_SOCKET_CLOSED_H
 #define TP3_TALLER1_SOCKET_CLOSED_H
 
 #include <exception>
@@ -18,4 +18,4 @@ public:
 };
 
 
-#endif //TP3_TALLER1_SOCKET_CLOSED_H
+#endif //TP3_TALLER1_COMMON_SOCKET_CLOSED_H

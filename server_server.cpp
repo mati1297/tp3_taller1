@@ -19,6 +19,7 @@ void Server::execute(const char * port) {
 
     // TODO Refactor (aca o en el otro)
     while (true) {
+        // TODO mostrar mensaje si otra letra se ingresa
         std::cin >> input;
         if (input == "q")
             break;

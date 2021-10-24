@@ -2,7 +2,7 @@
 #include "server_client_thread.h"
 #include "common_protocol.h"
 #include "server_protected_map.h"
-#include "socket_closed.h"
+#include "common_socket_closed.h"
 
 #include <string>
 #include <utility>
