@@ -15,7 +15,8 @@ void Protocol::sendDefineQueue(const std::string & queue_name) const{
     socket.send(packet);
 }
 
-void Protocol::sendPushMessage(const std::string & queue_name, const std::string & message) const {
+void Protocol::sendPushMessage(const std::string & queue_name,
+                               const std::string & message) const {
     Packet packet;
     packet.addByte(PUSH_CHAR);
     packText(packet, queue_name);
@@ -32,29 +33,26 @@ void Protocol::sendPopMessage(const std::string & queue_name) const {
     socket.send(packet);
 }
 
-Protocol::Command Protocol::receive(std::string & queue_name, std::string & message) {
+Protocol::Command Protocol::receive(std::string & queue_name,
+                                    std::string & message) {
     Packet packet;
 
     socket.receive(packet, 1);
 
-    switch(packet.getByte()) {
+    switch (packet.getByte()) {
         case DEFINE_QUEUE_CHAR:
             queue_name = receiveAndUnpackText();
             return DEFINE_QUEUE;
-            break;
         case PUSH_CHAR:
             queue_name = receiveAndUnpackText();
             message = receiveAndUnpackText();
             return PUSH;
-            break;
         case POP_CHAR:
             queue_name = receiveAndUnpackText();
             return POP;
-            break;
         default:
             queue_name = "";
             return NO_CMD;
-            break;
     }
 }
 
@@ -65,8 +63,10 @@ void Protocol::sendMessage(const std::string & message) {
 }
 
 void Protocol::packText(Packet & packet, const std::string & text) const {
-    if(text.size() > UINT16_MAX)
-        throw std::invalid_argument("el texto a enviar es demasiado largo, el largo maximo es de " + std::to_string(UINT16_MAX));
+    if (text.size() > UINT16_MAX)
+        throw std::invalid_argument("el texto a enviar es demasiado largo, "
+                                    "el largo maximo es de "
+                                    + std::to_string(UINT16_MAX));
     packet.addBytes(htons(text.size()));
     packet.addBytes(text);
 }

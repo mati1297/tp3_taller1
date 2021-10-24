@@ -5,8 +5,9 @@
 #define ARGUMENTS_SIZE 1
 
 int main(int argc, char * argv[]) {
-    if(argc != ARGUMENTS_SIZE + 1){
-        std::cerr << "Error: la cantidad de argumentos debe ser " << ARGUMENTS_SIZE << std::endl;
+    if (argc != ARGUMENTS_SIZE + 1){
+        std::cerr << "Error: la cantidad de argumentos debe ser "
+                  << ARGUMENTS_SIZE << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -14,7 +15,7 @@ int main(int argc, char * argv[]) {
         Server server;
         server.execute(argv[1]);
     }
-    catch (const std::exception & e){
+    catch(const std::exception & e){
         std::cerr << "Error: " << e.what() << std::endl;
     }
 }

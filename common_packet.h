@@ -28,19 +28,9 @@ public:
 
     uint32_t sent() const;
 
-    void reset();
-
-    void resetSent();
-
     uint32_t size();
 
     const char * getPendingToSent() const;
-
-    void print();
-
-    void resetRead();
-
-    uint32_t read() const;
 
     char getByte();
 

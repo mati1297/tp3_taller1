@@ -1,6 +1,9 @@
 #ifndef TP3_TALLER1_SERVER_PROTECTED_MAP_H
 #define TP3_TALLER1_SERVER_PROTECTED_MAP_H
 
+#include <map>
+#include <utility>
+
 template <class Key, class Val>
 class ProtectedMap {
 private:

@@ -1,6 +1,7 @@
 #ifndef TP3_TALLER1_COMMON_PROTOCOL_H
 #define TP3_TALLER1_COMMON_PROTOCOL_H
 
+#include <string>
 #include "common_socket.h"
 
 #define DEFINE_QUEUE_CHAR 'd'
@@ -30,7 +31,8 @@ public:
 
     void sendDefineQueue(const std::string & queue_name) const;
 
-    void sendPushMessage(const std::string &queue_name, const std::string &message) const;
+    void sendPushMessage(const std::string &queue_name,
+                         const std::string &message) const;
 
     void sendPopMessage(const std::string &queue_name) const;
 

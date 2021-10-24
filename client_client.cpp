@@ -1,6 +1,5 @@
 #include "client_client.h"
-#include "common_socket.h"
-#include "common_protocol.h"
+#include <string>
 #include "missing_parameter.h"
 #include <iostream>
 #include <sstream>
@@ -16,29 +15,25 @@ Client::Client(const char * host, const char * port):
 
 
 void Client::execute() {
-    while(true) {
+    while (true) {
         std::string line;
-
         std::getline(std::cin, line);
-
         std::istringstream iss(line);
-
         std::string command, queue_name, message;
-
         iss >> command >> queue_name >> message;
 
         // TODO VALIDAR ESTO LO DE MAP CON UN TRY CATCH?
         try {
             (*functors.at(command))(*this, queue_name, message);
         }
-        catch (const MissingParameter & e){
-            std::cout << "Error: " << e.what() << ". Reintenta." << std::endl;
+        catch(const MissingParameter & e){
+            std::cerr << "Error: " << e.what() << ". Reintenta." << std::endl;
         }
-        catch (const std::out_of_range & e) {
-            std::cout << "Error: el comando no existe. Reintenta." << std::endl;
+        catch(const std::out_of_range & e) {
+            std::cerr << "Error: el comando no existe. Reintenta." << std::endl;
         }
 
-        if(exit_flag)
+        if (exit_flag)
             return;
     }
 }
@@ -47,30 +42,32 @@ void Client::setExit() {
     exit_flag = true;
 }
 
-void Client::CommandSendPopMessage::operator()(Client &client, const std::string &queue_name,
-                                               const std::string &message) const {
-    if(queue_name.empty())
+void Client::CommandSendPopMessage::operator()(Client &client,
+                    const std::string &queue_name,
+                    const std::string &message) const {
+    if (queue_name.empty())
         throw MissingParameter("nombre de la cola faltante");
     client.protocol.sendPopMessage(queue_name);
     std::cout << client.protocol.receiveAndUnpackText() << std::endl;
 }
 
-void Client::CommandSendPushMessage::operator()(Client &client, const std::string &queue_name,
-                                                const std::string &message) const {
-    if(queue_name.empty())
+void Client::CommandSendPushMessage::operator()(Client &client,
+        const std::string &queue_name, const std::string &message) const {
+    if (queue_name.empty())
         throw MissingParameter("nombre de la cola faltante");
-    if(message.empty())
+    if (message.empty())
         throw MissingParameter("mensaje faltante");
     client.protocol.sendPushMessage(queue_name, message);
 }
 
-void Client::CommandDefineQueueMessage::operator()(Client &client, const std::string &queue_name,
-                                                   const std::string &message) const {
-    if(queue_name.empty())
+void Client::CommandDefineQueueMessage::operator()(Client &client,
+        const std::string &queue_name, const std::string &message) const {
+    if (queue_name.empty())
         throw MissingParameter("nombre de la cola faltante");
     client.protocol.sendDefineQueue(queue_name);
 }
 
-void Client::CommandExit::operator()(Client &client, const std::string &queue_name, const std::string &message) const {
+void Client::CommandExit::operator()(Client &client,
+        const std::string &queue_name, const std::string &message) const {
     client.setExit();
 }

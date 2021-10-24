@@ -6,8 +6,9 @@
 #define ARGUMENTS_SIZE 2
 
 int main(int argc, char * argv[]) {
-    if(argc != ARGUMENTS_SIZE + 1){
-        std::cerr << "Error: la cantidad de argumentos debe ser " << ARGUMENTS_SIZE << std::endl;
+    if (argc != ARGUMENTS_SIZE + 1){
+        std::cerr << "Error: la cantidad de argumentos debe ser "
+                  << ARGUMENTS_SIZE << std::endl;
         return EXIT_FAILURE;
     }
 

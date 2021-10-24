@@ -39,6 +39,8 @@ public:
     size_t send(Packet & packet) const;
 
     size_t receive(Packet & packet, size_t size) const;
+
+    void close();
 };
 
 
