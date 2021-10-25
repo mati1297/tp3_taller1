@@ -50,6 +50,10 @@ void AcceptorThread::operator()() {
     }
     catch(const SocketClosed & e){}
 
+    catch(const std::exception & e){
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+
     auto iterclients = clients.begin();
     auto iterthreads = threads.begin();
     for (; iterclients != clients.end() && iterthreads != threads.end();
