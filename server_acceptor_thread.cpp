@@ -48,26 +48,14 @@ void AcceptorThread::operator()() {
             }
         }
     }
-    catch(const SocketClosed & e){
-        auto iterclients = clients.begin();
-        auto iterthreads = threads.begin();
-        for (; iterclients != clients.end() && iterthreads != threads.end();
-             iterclients++, iterthreads++){
-            iterclients->stop();
-            while (!iterclients->isDead()) {}
-            if (iterthreads->joinable())
-                iterthreads->join();
-        }
-    }
-    catch(const std::exception & e) {
-        auto iterclients = clients.begin();
-        auto iterthreads = threads.begin();
-        for (; iterclients != clients.end() && iterthreads != threads.end();
-             iterclients++, iterthreads++){
-            iterclients->stop();
-            while (!iterclients->isDead()) {}
-            if (iterthreads->joinable())
-                iterthreads->join();
-        }
+    catch(const SocketClosed & e){}
+
+    auto iterclients = clients.begin();
+    auto iterthreads = threads.begin();
+    for (; iterclients != clients.end() && iterthreads != threads.end();
+           iterclients++, iterthreads++){
+        iterclients->stop();
+        if (iterthreads->joinable())
+            iterthreads->join();
     }
 }
