@@ -35,19 +35,31 @@ ClientThread::ClientThread(ClientThread &&orig) noexcept:
 
 
 void ClientThread::operator()() {
+    sleep(10);
+    /*
     try {
+        std::cout << "soy un hilo cliente corriendo" << std::endl;
         while (keep_talking) {
             std::string queue_name, message;
             Protocol::Command cmd;
+            std::cout << "soy un hilo cliente que va a recibir" << std::endl;
             cmd = protocol.receive(queue_name, message);
+            std::cout << "soy un hilo cliente que"
+                         " recibio un comando" << std::endl;
             switch (cmd) {
                 case Protocol::DEFINE_QUEUE:
+                    std::cout << "soy un hilo cliente que recibio"
+                                 " un define" << std::endl;
                     defineQueue(queue_name);
                     break;
                 case Protocol::PUSH:
+                    std::cout << "soy un hilo cliente que recibio"
+                                 " un define" << std::endl;
                     pushMessage(queue_name, message);
                     break;
                 case Protocol::POP:
+                    std::cout << "soy un hilo cliente que recibio "
+                                 "un define" << std::endl;
                     popMessage(queue_name);
                     break;
                 case Protocol::NO_CMD:
@@ -61,21 +73,22 @@ void ClientThread::operator()() {
     catch(const std::exception & e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
+     */
     is_running = false;
-    peer.close();
 }
 
 // TODO TENGO QUE DESTRUIR LOS CLIENTES.
 
-bool ClientThread::isDead() {
+/*bool ClientThread::isDead() {
     return !is_running;
 }
 
 void ClientThread::stop() {
     keep_talking = false;
     peer.close();
-}
+}*/
 
+/*
 void ClientThread::popMessage(const std::string &queue_name) {
     // TODO que hago si no existe la cola?
     try {
@@ -107,7 +120,7 @@ void ClientThread::defineQueue(const std::string &queue_name) {
     BlockingQueue<std::string> new_queue;
     queues.insert(std::pair<std::string, BlockingQueue<std::string>>
                                         (queue_name, std::move(new_queue)));
-}
+}*/
 
 
 

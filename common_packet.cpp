@@ -64,10 +64,10 @@ char Packet::getByte() {
     return array[read_++];
 }
 
-void Packet::addByte(char byte){
+/*void Packet::addByte(char byte){
     array.push_back(byte);
     size_++;
-}
+}*/
 
 
 

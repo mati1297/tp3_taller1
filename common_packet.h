@@ -34,7 +34,7 @@ public:
 
     char getByte();
 
-    void addByte(char byte);
+    //void addByte(char byte);
 
     void getBytes(std::string &out, const uint32_t &size);
 

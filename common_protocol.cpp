@@ -5,9 +5,9 @@
 #include "common_socket.h"
 #include "common_packet.h"
 
-Protocol::Protocol(const Socket & socket_): socket(socket_) {}
+Protocol::Protocol(Socket & socket_): socket(socket_) {}
 
-void Protocol::sendDefineQueue(const std::string & queue_name) const{
+/*void Protocol::sendDefineQueue(const std::string & queue_name) const{
     Packet packet;
     packet.addByte(DEFINE_QUEUE_CHAR);
     packText(packet, queue_name);
@@ -32,6 +32,7 @@ void Protocol::sendPopMessage(const std::string & queue_name) const {
 
     socket.send(packet);
 }
+ */
 
 Protocol::Command Protocol::receive(std::string & queue_name,
                                     std::string & message) {
@@ -55,21 +56,22 @@ Protocol::Command Protocol::receive(std::string & queue_name,
             return NO_CMD;
     }
 }
-
+/*
 void Protocol::sendMessage(const std::string & message) {
     Packet packet;
     packText(packet, message);
     socket.send(packet);
 }
+*/
 
-void Protocol::packText(Packet & packet, const std::string & text) const {
+/*void Protocol::packText(Packet & packet, const std::string & text) const {
     if (text.size() > UINT16_MAX)
         throw std::invalid_argument("el texto a enviar es demasiado largo, "
                                     "el largo maximo es de "
                                     + std::to_string(UINT16_MAX));
     packet.addBytes(htons(text.size()));
     packet.addBytes(text);
-}
+}*/
 
 std::string Protocol::receiveAndUnpackText() const {
     Packet packet;

@@ -5,7 +5,7 @@
 #include "server_acceptor_thread.h"
 #include "common_socket_closed.h"
 
-AcceptorThread::AcceptorThread(const Socket &socket_, ProtectedMap<std::string,
+AcceptorThread::AcceptorThread(Socket &socket_, ProtectedMap<std::string,
         BlockingQueue<std::string>> & queues_): socket(socket_), clients(),
                                                 threads(), queues(queues_) {}
 
@@ -20,10 +20,17 @@ void AcceptorThread::operator()() {
     // TODO fijarse que se rompe el q cuando tengo dos abiertos
     // TODO ver bien como es el tema del iterador con el end y eso.
     //  Ver foreach.!!
+    sleep(10);
+    /*
+    std::cout << "soy el hilo aceptador ejecutandome" << std::endl;
     try {
+        std::cout << "soy el hilo aceptador ejecutandome en try" << std::endl;
         while (true) {
+            std::cout << "soy el hilo aceptador"
+                         " ejecutandome en while" << std::endl;
             Socket peer = std::move(socket.accept());
 
+            std::cout << "arranco un hilo" << std::endl;
             clients.insert(clients.end(),
                            std::move(ClientThread(std::move(peer), queues)));
             if (!clients.empty())
@@ -48,14 +55,22 @@ void AcceptorThread::operator()() {
             }
         }
     }
-    catch(const SocketClosed & e){}
+    
+    catch(const SocketClosed & e){
+        // TODO Print
+    }
+    catch(const std::exception & e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
 
     auto iterclients = clients.begin();
     auto iterthreads = threads.begin();
+    std::cout << "mato los threads de clientes" << std::endl;
     for (; iterclients != clients.end() && iterthreads != threads.end();
            iterclients++, iterthreads++){
         iterclients->stop();
         if (iterthreads->joinable())
             iterthreads->join();
     }
+     */
 }

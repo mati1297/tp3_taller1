@@ -9,7 +9,7 @@
 #define POP_CHAR 'o'
 
 class Protocol {
-    const Socket & socket;
+    Socket & socket;
 
 public:
     typedef enum {
@@ -19,7 +19,7 @@ public:
         NO_CMD
     } Command;
 
-    explicit Protocol(const Socket & socket_);
+    explicit Protocol(Socket & socket_);
 
     Protocol(const Protocol &) = delete;
 
@@ -29,18 +29,18 @@ public:
 
     Protocol & operator=(const Protocol &&) = delete;
 
-    void sendDefineQueue(const std::string & queue_name) const;
+    /*void sendDefineQueue(const std::string & queue_name) const;
 
     void sendPushMessage(const std::string &queue_name,
                          const std::string &message) const;
 
-    void sendPopMessage(const std::string &queue_name) const;
+    void sendPopMessage(const std::string &queue_name) const;*/
 
     Command receive(std::string & queue_name, std::string & message);
 
-    void packText(Packet & packet, const std::string &message) const;
+    //void packText(Packet & packet, const std::string &message) const;
 
-    void sendMessage(const std::string & message);
+    //void sendMessage(const std::string & message);
 
     std::string receiveAndUnpackText() const;
 };
