@@ -9,18 +9,22 @@
 #include "server_protected_map.h"
 
 #define EXIT_CMD "q"
+#define PEND_CONNECTIONS 8
 
+/* Clase que ejecuta el server. Posee como atributo
+ * un map protegido de colas de string. */
 class Server {
-    // TODO Hacerle monitor a esto.
     ProtectedMap<std::string, std::string> queues;
 
 
 public:
+    // Constructor.
     Server();
 
+    /* Ejecuta el server en el puerto indicado.
+     * Pre:
+     *  -port debe apuntar a una direccion de memoria valida. */
     void execute(const char * port);
-
-    // TODO despues esto debe recibir el protocolo.
 };
 
 

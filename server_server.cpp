@@ -8,11 +8,14 @@
 Server::Server(): queues() {}
 
 void Server::execute(const char * port) {
-    Socket socket;
-    socket.bindAndListen(port, 8);
+    // Se crea, bindea y se deja en escucha el socket.
+    Socket acceptor_socket;
+    acceptor_socket.bindAndListen(port, PEND_CONNECTIONS);
 
-    AcceptorThread acceptor_thread(socket, queues);
+    // Se lanza el hilo aceptador.
+    AcceptorThread acceptor_thread(acceptor_socket, queues);
 
+    // Mientras que no se ingrese el caracter de exit se queda en loop.
     while (true) {
         std::string input;
         std::cin >> input;
@@ -22,8 +25,11 @@ void Server::execute(const char * port) {
         else
             break;
     }
-    socket.shutdownAndClose();
+    // Se cierra el socket aceptador.
+    acceptor_socket.shutdownAndClose();
+    // Se desbloquea el map de colas.
     queues.unlockAll();
+    // Se joinea el hilo aceptador.
     if (acceptor_thread.joinable())
         acceptor_thread.join();
 }
