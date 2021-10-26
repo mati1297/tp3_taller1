@@ -63,10 +63,10 @@ public:
      * conectar el cliente.
      * Pre:
      *  -host y port deben apuntar a posiciones de memoria validas. */
-    Client(const char * host, const char * port);
+    Client();
 
     // Ejecuta el server.
-    void execute();
+    void execute(const char * host, const char * port);
 };
 
 

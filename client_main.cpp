@@ -19,8 +19,8 @@ int main(int argc, char * argv[]) {
 
     // Se ejecuta el cliente.
     try {
-        Client client(argv[1], argv[2]);
-        client.execute();
+        Client client;
+        client.execute(argv[1], argv[2]);
     }
     // Se catchea e imprime el status.
     catch(const InvalidParameterAddr & e) {

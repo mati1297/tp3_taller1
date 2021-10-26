@@ -4,17 +4,16 @@
 #include <iostream>
 #include <sstream>
 
-Client::Client(const char * host, const char * port):
+Client::Client():
                socket(), protocol(socket), cmd_send_pop(),
                cmd_send_push(), cmd_send_define_queue(),
                functors {{"push", &cmd_send_push}, {"pop", &cmd_send_pop},
                          {"define", &cmd_send_define_queue},
-                         {"exit", &cmd_exit}}, exit_flag(false) {
+                         {"exit", &cmd_exit}}, exit_flag(false) {}
+
+
+void Client::execute(const char * host, const char * port) {
     socket.connect(host, port);
-}
-
-
-void Client::execute() {
     while (true) {
         std::string command, queue_name, message;
         readLine(command, queue_name, message);

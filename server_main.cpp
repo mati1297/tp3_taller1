@@ -17,8 +17,8 @@ int main(int argc, char * argv[]) {
     }
     // Se ejecuta el server.
     try {
-        Server server(argv[1]);
-        server.execute();
+        Server server;
+        server.execute(argv[1]);
     }
     // Se catchean excepciones y se imprime el status.
     catch(const InvalidParameterAddr & e){

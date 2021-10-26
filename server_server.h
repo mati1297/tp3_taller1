@@ -21,7 +21,7 @@ public:
     /* Constructor.
      * Pre:
      *  -port debe apuntar a una direccion de memoria valida. */
-    explicit Server(const char * port);
+    explicit Server();
 
     Server(const Server &r) = delete;
 
@@ -32,7 +32,7 @@ public:
     void operator=(Server &&) = delete;
 
     // Ejecuta el server en el puerto indicado.
-    void execute();
+    void execute(const char * port);
 };
 
 
