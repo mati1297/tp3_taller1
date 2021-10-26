@@ -9,7 +9,9 @@
 AcceptorThread::AcceptorThread(const Socket &socket_,
                                ProtectedBlockingQueueMap<std::string,
                                std::string> & queues_): socket(socket_),
-                                                        clients(), queues(queues_), thread() {
+                                                        clients(),
+                                                        queues(queues_),
+                                                        thread() {
     // Arranca el hilo.
     thread = std::thread(std::ref(*this));
 }

@@ -21,7 +21,7 @@ public:
     /* Constructor.
      * Pre:
      *  -port debe apuntar a una direccion de memoria valida. */
-    Server(const char * port);
+    explicit Server(const char * port);
 
     Server(const Server &r) = delete;
 
