@@ -38,12 +38,16 @@ void AcceptorThread::operator()() {
             auto iterclients = clients.begin();
             auto iterthreads = threads.begin();
             for (; iterclients != clients.end() && iterthreads != threads.end();
-                 iterclients++, iterthreads++) {
+            ) {
                 if (iterclients->isDead()) {
                     if (iterthreads->joinable())
                         iterthreads->join();
                     iterthreads = threads.erase(iterthreads);
                     iterclients = clients.erase(iterclients);
+                }
+                else{
+                    ++iterthreads;
+                    ++iterclients;
                 }
             }
         }
