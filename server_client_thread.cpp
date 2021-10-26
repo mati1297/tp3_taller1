@@ -72,7 +72,7 @@ bool ClientThread::isDead() {
 
 void ClientThread::stop() {
     keep_talking = false;
-    peer.close();
+    peer.shutdownAndClose();
 }
 
 void ClientThread::popMessage(const std::string &queue_name) {

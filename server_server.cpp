@@ -24,7 +24,7 @@ void Server::execute(const char * port) {
         if (input == "q")
             break;
     }
-    socket.close();
+    socket.shutdownAndClose();
     queues.unlockAll();
     thread.join();
 }

@@ -1,6 +1,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <vector>
 #include "common_packet.h"
 
 // TODO ver como hacer con el size_ (usar el del vector??)

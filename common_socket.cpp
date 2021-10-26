@@ -26,13 +26,15 @@ Socket & Socket::operator=(Socket &&orig) {
 }
 
 Socket::~Socket() {
-    close();
+    shutdownAndClose();
 }
 
 void Socket::connect(const char * host, const char * port) {
     struct addrinfo * result, * ptr;
+    // Se carga la estructura de direcciones.
     getAddressInfo(&result, host, port);
 
+    // Se itera hasta que se pueda conectar.
     for (ptr = result; ptr; ptr = ptr->ai_next){
         int skt = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 
@@ -40,6 +42,7 @@ void Socket::connect(const char * host, const char * port) {
             if (::connect(skt, ptr->ai_addr, ptr->ai_addrlen)) {
                 ::close(skt);
             } else {
+                // Si se conecta se guarda el fd.
                 fd = skt;
                 break;
             }
@@ -47,28 +50,36 @@ void Socket::connect(const char * host, const char * port) {
     }
 
     freeaddrinfo(result);
+
+    // Si no se encontro se lanza excepcion.
     if (fd == INVALID_FILE_DESCRIPTOR)
         throw std::runtime_error("fallo al conectar al host");
 
     int optval = 1;
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int));
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)))
+        throw std::runtime_error("fallo al configurar opciones de socket");
 }
 
 void Socket::bindAndListen(const char * port, uint8_t pend_conn) {
     struct addrinfo * result, * ptr;
-
+    // Se carga la estructura de direcciones.
     getAddressInfo(&result, nullptr, port);
 
+    // Se itera hasta que pueda bindear.
     for (ptr = result; ptr; ptr = ptr->ai_next) {
         int skt = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
         if (skt != -1){
             int optval = 1;
             if (setsockopt(skt, SOL_SOCKET, SO_REUSEADDR, &optval,
-                           sizeof(int)) < 0);
-                // TODO validar
+                           sizeof(int)) < 0) {
+                freeaddrinfo(result);
+                throw std::runtime_error("fallo al configurar opciones "
+                                         "de socket");
+            }
             if (::bind(skt, result->ai_addr, result->ai_addrlen)) {
                 ::close(skt);
             } else{
+                // Si se pudo bindear se guarda el fd.
                 fd = skt;
                 break;
             }
@@ -86,6 +97,8 @@ void Socket::bindAndListen(const char * port, uint8_t pend_conn) {
 Socket Socket::accept() const {
     if (fd == INVALID_FILE_DESCRIPTOR)
         throw std::runtime_error("el socket tiene un fd invalido");
+
+    // Se acepta la conexion entrante.
     int fd_peer = ::accept(fd, nullptr, nullptr);
     if (fd_peer == -1) {
         if (errno == EBADF || errno == EINVAL)
@@ -97,9 +110,7 @@ Socket Socket::accept() const {
 
 void Socket::getAddressInfo(struct addrinfo ** result, const char * host,
                             const char * port) {
-    // TODO crear clase para addrinfo?.
     struct addrinfo hints{};
-    //::memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     if (host == nullptr)
@@ -114,6 +125,8 @@ void Socket::getAddressInfo(struct addrinfo ** result, const char * host,
 size_t Socket::send(Packet & packet) const {
     if (fd == INVALID_FILE_DESCRIPTOR)
         throw std::runtime_error("el socket tiene un fd invalido");
+    // TODO packet.resetSend();
+    // TODO documentar cuando refactorize packet.
     while (packet.pendingToSentSize() > 0) {
         ssize_t bytes_sent = ::send(fd, packet.getPendingToSent(),
                                     packet.pendingToSentSize(), MSG_NOSIGNAL);
@@ -130,6 +143,7 @@ size_t Socket::send(Packet & packet) const {
 }
 
 size_t Socket::receive(Packet & packet, size_t size){
+    // TODO ver cuando refactorize packet.
     if (fd == INVALID_FILE_DESCRIPTOR)
         throw std::runtime_error("el socket tiene un fd invalido");
     std::vector<char> buffer(size);
@@ -156,7 +170,7 @@ size_t Socket::receive(Packet & packet, size_t size){
 
 Socket::Socket(int fd_): fd(fd_) {}
 
-void Socket::close(){
+void Socket::shutdownAndClose(){
     if (fd != INVALID_FILE_DESCRIPTOR) {
         ::shutdown(fd, SHUT_RDWR);
         ::close(fd);
