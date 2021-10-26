@@ -12,7 +12,6 @@ void Server::execute(const char * port) {
     socket.bindAndListen(port, 8);
 
     AcceptorThread acceptor_thread(socket, queues);
-    acceptor_thread.run();
 
     while (true) {
         std::string input;

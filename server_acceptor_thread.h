@@ -35,8 +35,6 @@ public:
     void join();
 
     bool joinable();
-
-    void run();
 };
 
 

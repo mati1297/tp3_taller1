@@ -7,9 +7,7 @@
 
 AcceptorThread::AcceptorThread(Socket &socket_, ProtectedMap<std::string,
         std::string> & queues_): socket(socket_), clients(),
-                                                threads(), queues(queues_), thread() {}
-
-void AcceptorThread::run(){
+                                                threads(), queues(queues_), thread() {
     // Arranca el hilo.
     thread = std::thread(std::ref(*this));
 }
