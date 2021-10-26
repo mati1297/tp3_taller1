@@ -16,29 +16,31 @@ Client::Client(const char * host, const char * port):
 
 void Client::execute() {
     while (true) {
-        std::string line;
-        std::getline(std::cin, line);
-        std::istringstream iss(line);
         std::string command, queue_name, message;
-        iss >> command >> queue_name >> message;
+        readLine(command, queue_name, message);
 
-        // TODO VALIDAR ESTO LO DE MAP CON UN TRY CATCH?
+        /* Se utiliza un map, ya que como los comandos son texto,
+         * no era posible utilizar un switch. */
         try {
             (*functors.at(command))(*this, queue_name, message);
         }
         catch(const MissingParameter & e){
             std::cerr << "Error: " << e.what() << ". Reintenta." << std::endl;
-            throw;
         }
         catch(const std::out_of_range & e) {
             std::cerr << "Error: el comando no existe. Reintenta." << std::endl;
-            throw;
         }
-
         if (exit_flag) {
             return;
         }
     }
+}
+
+void Client::readLine(std::string & command, std::string & queue_name, std::string & message) {
+    std::string line;
+    std::getline(std::cin, line);
+    std::istringstream iss(line);
+    iss >> command >> queue_name >> message;
 }
 
 void Client::setExit() {
