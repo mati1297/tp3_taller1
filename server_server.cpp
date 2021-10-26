@@ -3,9 +3,7 @@
 #include <iostream>
 #include "server_acceptor_thread.h"
 
-Server::Server(): queues(), acceptor_socket() {
-
-}
+Server::Server(): queues(), acceptor_socket() {}
 
 void Server::execute(const char * port) {
     // Se bindea y se deja en escucha el socket.
