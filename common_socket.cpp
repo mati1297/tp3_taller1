@@ -10,15 +10,13 @@
 #include "common_invalid_parameter_addr.h"
 #include "common_socket_closed.h"
 
-// TODO cambiar excepciones que correspondan por excepciones personalizadas
-// TODO PROTEGER CLASE
-// TODO CREAR CLASE DENTRO DE SOCKET PARA STRUCT RAII
-
 Socket::Socket(): fd(INVALID_FILE_DESCRIPTOR) {}
 
 Socket::Socket(Socket && orig) noexcept: fd(orig.fd) {
     orig.fd = INVALID_FILE_DESCRIPTOR;
 }
+
+Socket::Socket(int fd_): fd(fd_) {}
 
 Socket & Socket::operator=(Socket &&orig) {
     this->fd = orig.fd;
@@ -125,11 +123,13 @@ void Socket::getAddressInfo(struct addrinfo ** result, const char * host,
 size_t Socket::send(Packet & packet) const {
     if (fd == INVALID_FILE_DESCRIPTOR)
         throw std::runtime_error("el socket tiene un fd invalido");
-    // TODO packet.resetSend();
-    // TODO documentar cuando refactorize packet.
+    packet.resetSent();
+    // Mientras que quede algo pendiente de enviar se itera.
     while (packet.pendingToSentSize() > 0) {
+        // Se envian los datos pendientes.
         ssize_t bytes_sent = ::send(fd, packet.getPendingToSent(),
                                     packet.pendingToSentSize(), MSG_NOSIGNAL);
+        // Si no se envio nada se lanza excepcion de socket cerrado.
         if (bytes_sent == 0)
             throw SocketClosed();
         if (bytes_sent == -1) {
@@ -137,21 +137,23 @@ size_t Socket::send(Packet & packet) const {
                 throw SocketClosed();
             throw std::runtime_error("status al enviar datos");
         }
+        // Se contabiliza la cantida de bytes enviados.
         packet.addSentAmount(bytes_sent);
     }
+    // Se devuelve la cantidad de bytes enviados.
     return packet.sent();
 }
 
-size_t Socket::receive(Packet & packet, size_t size){
-    // TODO ver cuando refactorize packet.
+size_t Socket::receive(Packet & packet, size_t size) const{
     if (fd == INVALID_FILE_DESCRIPTOR)
         throw std::runtime_error("el socket tiene un fd invalido");
-    std::vector<char> buffer(size);
+    // Se crea un buffer para recibir.
+    std::vector<char> buffer(size, 0);
     packet.reset();
     while (packet.size() < size) {
-        // TODO ver si hacer refactor de esto
-        //  o dejarlo asi (tema encapsulamiento).
-        ssize_t bytes_recv = recv(fd, buffer.data(), buffer.size(), 0);
+        // Se recibe el tamanio del buffer.
+        ssize_t bytes_recv = recv(fd, buffer.data(), size - packet.size(), 0);
+        // Si no se recibio nada, socket cerrado. Sino error.
         if (bytes_recv == 0) {
             throw SocketClosed();
         }
@@ -161,14 +163,12 @@ size_t Socket::receive(Packet & packet, size_t size){
             }
             throw std::runtime_error("status al recibir datos");
         }
-        // TODO hacer que reciba vector?
+        // Se agregan los bytes recibidos al paquete.
         packet.addBytes(buffer.data(), bytes_recv);
-        buffer.resize(buffer.size() - bytes_recv);
     }
+    // Se devuelven los bytes recibidos.
     return packet.size();
 }
-
-Socket::Socket(int fd_): fd(fd_) {}
 
 void Socket::shutdownAndClose(){
     if (fd != INVALID_FILE_DESCRIPTOR) {

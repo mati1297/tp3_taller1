@@ -34,7 +34,7 @@ void Protocol::sendPopMessage(const std::string & queue_name) const {
 }
 
 Protocol::Command Protocol::receive(std::string & queue_name,
-                                    std::string & message) {
+                                    std::string & message) const {
     Packet packet;
 
     socket.receive(packet, 1);
@@ -56,20 +56,10 @@ Protocol::Command Protocol::receive(std::string & queue_name,
     }
 }
 
-void Protocol::sendMessage(const std::string & message) {
+void Protocol::sendMessage(const std::string & message) const {
     Packet packet;
     packText(packet, message);
     socket.send(packet);
-}
-
-
-void Protocol::packText(Packet & packet, const std::string & text) const {
-    if (text.size() > UINT16_MAX)
-        throw std::invalid_argument("el texto a enviar es demasiado largo, "
-                                    "el largo maximo es de "
-                                    + std::to_string(UINT16_MAX));
-    packet.addBytes(htons(text.size()));
-    packet.addBytes(text);
 }
 
 std::string Protocol::receiveAndUnpackText() const {
@@ -82,6 +72,15 @@ std::string Protocol::receiveAndUnpackText() const {
     std::string text;
     packet.getBytes(text, size);
     return text;
+}
+
+void Protocol::packText(Packet & packet, const std::string & text) const {
+    if (text.size() > UINT16_MAX)
+        throw std::invalid_argument("el texto a enviar es demasiado largo, "
+                                    "el largo maximo es de "
+                                    + std::to_string(UINT16_MAX));
+    packet.addBytes(htons(text.size()));
+    packet.addBytes(text);
 }
 
 

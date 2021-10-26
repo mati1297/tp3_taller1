@@ -8,8 +8,6 @@
 #include <string>
 #include "server_client_thread.h"
 
-// TODO repasar privados y publicos (en todos lados).
-
 /* Clase wrapper del thread aceptador. Posee una referencia al socket
  * aceptador, una lista con los clientes activos, un map con las colas
  * y el thread correspondiente. */

@@ -37,7 +37,7 @@ void Client::execute() {
 }
 
 void Client::readLine(std::string & command, std::string & queue_name,
-                      std::string & message) {
+                      std::string & message) const {
     std::string line;
     std::getline(std::cin, line);
     std::istringstream iss(line);

@@ -6,8 +6,6 @@
 #include <utility>
 #include <condition_variable>
 
-// TODO usar movimiento
-
 /* Clase template monitor de una cola. Es bloqueante,
  * por lo que a la hora de hacer el pop, si la cola se
  * encuentra vacia, el hilo que trate de leer quedara bloqueado

@@ -53,7 +53,7 @@ public:
     size_t send(Packet & packet) const;
 
     // Recibe un paquete de size bytes.
-    size_t receive(Packet & packet, size_t size);
+    size_t receive(Packet & packet, size_t size) const;
 
     // Hace un shutdown y un close del socket.
     void shutdownAndClose();

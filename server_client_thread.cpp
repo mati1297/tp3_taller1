@@ -7,16 +7,12 @@
 #include <string>
 #include <utility>
 
-// TODO REVISAR CONST EN TODOS LADOS.
-
 ClientThread::ClientThread(Socket && peer_,
                            ProtectedBlockingQueueMap<std::string,
                            std::string> & queues_):
                            keep_talking(false), is_running(false),
                            peer(std::move(peer_)), protocol(peer),
                            queues(queues_), thread() {}
-
-// TODO revisar safety
 
 ClientThread::ClientThread(ClientThread &&orig) noexcept:
                            keep_talking(false), is_running(false),

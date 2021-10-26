@@ -53,7 +53,7 @@ private:
 
     // Lee una linea por stdin y la devuelve en distintas strings.
     void readLine(std::string &command, std::string &queue_name,
-                  std::string &message);
+                  std::string &message) const;
 
     // Setea el flag de exit.
     void setExit();
