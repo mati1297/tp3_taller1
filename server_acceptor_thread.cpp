@@ -5,25 +5,28 @@
 #include "server_acceptor_thread.h"
 #include "common_socket_closed.h"
 
-AcceptorThread::AcceptorThread(Socket &socket_, ProtectedMap<std::string,
-        std::string> & queues_): socket(socket_), clients(), threads(),
-        queues(queues_), thread() {
+AcceptorThread::AcceptorThread(const Socket &socket_, ProtectedMap<std::string,
+        std::string> & queues_): socket(socket_), clients(), queues(queues_),
+        thread() {
     // Arranca el hilo.
     thread = std::thread(std::ref(*this));
 }
 
 void AcceptorThread::operator()() {
-    // TODO validar si la lista esta vacia
-    // TODO ver bien como es el tema del iterador con el end y eso.
-    //  Ver foreach.!!
     try {
+        // Se itera siempre que no se cierre el socket aceptador.
         while (true) {
-            Socket peer = std::move(socket.accept());
+            // Se acepta un cliente.
+            Socket peer = socket.accept();
 
+            // Se crea un nuevo thread de cliente y se agrega a la lista.
             clients.insert(clients.end(),
                            std::move(ClientThread(std::move(peer), queues)));
+            // Se pone a correr el ultimo cliente agregado.
             clients.back().run();
 
+            /* Se itera los clientes para ver si alguno esta inactivo,
+             * si es asi se borra. */
             auto it = clients.begin();
             for (; it != clients.end();){
                 if (it->isDead()) {
@@ -36,13 +39,16 @@ void AcceptorThread::operator()() {
             }
         }
     }
-    
+
+    // Si se salio del ciclo porque se cerro el socket no se hace nada.
     catch(const SocketClosed & e) {}
 
+    // Si no se imprime un error.
     catch(const std::exception & e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
 
+    // Se terminan todos los hilos de clientes activos.
     auto it = clients.begin();
     for (; it != clients.end(); ++it){
         it->stop();
@@ -55,6 +61,6 @@ void AcceptorThread::join() {
     thread.join();
 }
 
-bool AcceptorThread::joinable() {
+bool AcceptorThread::joinable() const {
     return thread.joinable();
 }

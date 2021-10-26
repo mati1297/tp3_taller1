@@ -8,19 +8,22 @@
 #include <string>
 #include "server_client_thread.h"
 
-// TODO CAMBIAR NOMBREA ESTE Y CLIENTE POR ALGO QUE NO SEA THREAD
+// TODO repasar privados y publicos (en todos lados).
+
+/* Clase wrapper del thread aceptador. Posee una referencia al socket
+ * aceptador, una lista con los clientes activos, un map con las colas
+ * y el thread correspondiente. */
 class AcceptorThread {
-    Socket & socket;
+    const Socket & socket;
     std::list<ClientThread> clients;
-    std::list<std::thread> threads;
     ProtectedMap<std::string, std::string> & queues;
     std::thread thread;
 
 public:
-    AcceptorThread(Socket & socket, ProtectedMap<std::string,
+    /* Constructor. Se le pasa una ref al socket y otra al map de
+     * colas. */
+    AcceptorThread(const Socket & socket, ProtectedMap<std::string,
             std::string> & queues_);
-
-    ~AcceptorThread() = default;
 
     AcceptorThread(const AcceptorThread &) = delete;
 
@@ -30,11 +33,14 @@ public:
 
     AcceptorThread & operator=(AcceptorThread &&) = delete;
 
+    // Metodo que ejecuta el thread.
     void operator()();
 
+    // Joinea el hilo.
     void join();
 
-    bool joinable();
+    // Devuelve true si el hilo se puede joinear.
+    bool joinable() const;
 };
 
 

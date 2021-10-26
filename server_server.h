@@ -16,10 +16,16 @@
 class Server {
     ProtectedMap<std::string, std::string> queues;
 
-
 public:
-    // Constructor.
     Server();
+
+    Server(const Server &r) = delete;
+
+    Server(Server &&) = delete;
+
+    void operator=(const Server &) = delete;
+
+    void operator=(Server &&) = delete;
 
     /* Ejecuta el server en el puerto indicado.
      * Pre:
