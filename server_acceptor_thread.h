@@ -19,6 +19,12 @@ class AcceptorThread {
     ProtectedMap<std::string, std::string> & queues;
     std::thread thread;
 
+    // Detiene todos los clientes activos.
+    void stopClients();
+
+    // Si hay clientes muertos los elimina de la lista.
+    void checkDeadClients();
+
 public:
     /* Constructor. Se le pasa una ref al socket y otra al map de
      * colas. */

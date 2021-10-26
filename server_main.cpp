@@ -10,14 +10,20 @@ int main(int argc, char * argv[]) {
                   << ARGUMENTS_SIZE << std::endl;
         return EXIT_FAILURE;
     }
-
+    // Se ejecuta el server.
     try {
         Server server;
         server.execute(argv[1]);
     }
+    // Se catchean excepciones y se imprime el error.
     catch(const std::exception & e){
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
+    catch(...){
+        std::cerr << "Error desconocido" << std::endl;
+        return EXIT_FAILURE;
+    }
+
     return EXIT_SUCCESS;
 }

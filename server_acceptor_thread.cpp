@@ -25,35 +25,42 @@ void AcceptorThread::operator()() {
             // Se pone a correr el ultimo cliente agregado.
             clients.back().run();
 
-            /* Se itera los clientes para ver si alguno esta inactivo,
-             * si es asi se borra. */
-            auto it = clients.begin();
-            for (; it != clients.end();){
-                if (it->isDead()) {
-                    if (it->joinable())
-                        it->join();
-                    it = clients.erase(it);
-                } else {
-                    ++it;
-                }
-            }
+            checkDeadClients();
         }
     }
 
     // Si se salio del ciclo porque se cerro el socket no se hace nada.
     catch(const SocketClosed & e) {}
-
     // Si no se imprime un error.
     catch(const std::exception & e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
 
+    stopClients();
+}
+
+void AcceptorThread::stopClients() {
     // Se terminan todos los hilos de clientes activos.
     auto it = clients.begin();
     for (; it != clients.end(); ++it){
         it->stop();
         if (it->joinable())
             it->join();
+    }
+}
+
+void AcceptorThread::checkDeadClients(){
+    /* Se itera los clientes para ver si alguno esta inactivo,
+     * si es asi se borra. */
+    auto it = clients.begin();
+    for (; it != clients.end();){
+        if (it->isDead()) {
+            if (it->joinable())
+                it->join();
+            it = clients.erase(it);
+        } else {
+            ++it;
+        }
     }
 }
 
