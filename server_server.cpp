@@ -1,10 +1,7 @@
 #include "server_server.h"
 #include <string>
-#include <thread>
 #include <iostream>
-#include "common_protocol.h"
 #include "server_acceptor_thread.h"
-#include "common_invalid_parameter_addr.h"
 
 Server::Server(): queues(), acceptor_socket() {
 
