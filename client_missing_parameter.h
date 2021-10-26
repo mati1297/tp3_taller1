@@ -1,5 +1,5 @@
-#ifndef TP3_TALLER1_COMMON_SOCKET_CLOSED_H
-#define TP3_TALLER1_SOCKET_CLOSED_H
+#ifndef TP3_TALLER1_MISSING_PARAMETER_H
+#define TP3_TALLER1_MISSING_PARAMETER_H
 
 #include <exception>
 #include <utility>
@@ -18,4 +18,4 @@ public:
 };
 
 
-#endif //TP3_TALLER1_COMMON_SOCKET_CLOSED_H
+#endif //TP3_TALLER1_MISSING_PARAMETER_H

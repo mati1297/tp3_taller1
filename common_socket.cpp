@@ -7,6 +7,7 @@
 #include <vector>
 #include <stdexcept>
 #include "common_packet.h"
+#include "common_invalid_parameter_addr.h"
 #include "common_socket_closed.h"
 
 // TODO cambiar excepciones que correspondan por excepciones personalizadas
@@ -117,7 +118,7 @@ void Socket::getAddressInfo(struct addrinfo ** result, const char * host,
         hints.ai_flags = AI_PASSIVE;
     int s = getaddrinfo(host, port, &hints, result);
     if (s) {
-        throw std::runtime_error("no se pudo obtener la direccion al conectar");
+        throw InvalidParameterAddr("direccion erronea");
     }
 }
 
@@ -134,7 +135,7 @@ size_t Socket::send(Packet & packet) const {
         if (bytes_sent == -1) {
             if (errno == EPIPE)
                 throw SocketClosed();
-            throw std::runtime_error("error al enviar datos");
+            throw std::runtime_error("status al enviar datos");
         }
         packet.addSentAmount(bytes_sent);
     }
@@ -158,7 +159,7 @@ size_t Socket::receive(Packet & packet, size_t size){
             if (errno == EBADF) {
                 throw SocketClosed();
             }
-            throw std::runtime_error("error al recibir datos");
+            throw std::runtime_error("status al recibir datos");
         }
         // TODO hacer que reciba vector?
         packet.addBytes(buffer.data(), bytes_recv);

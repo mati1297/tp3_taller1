@@ -4,6 +4,7 @@
 #include <iostream>
 #include "common_protocol.h"
 #include "server_acceptor_thread.h"
+#include "common_invalid_parameter_addr.h"
 
 Server::Server(): queues() {}
 

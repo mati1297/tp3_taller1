@@ -14,6 +14,7 @@
  * aceptador, una lista con los clientes activos, un map con las colas
  * y el thread correspondiente. */
 class AcceptorThread {
+private:
     const Socket & socket;
     std::list<ClientThread> clients;
     ProtectedBlockingQueueMap<std::string, std::string> & queues;

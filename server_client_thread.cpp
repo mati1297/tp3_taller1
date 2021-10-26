@@ -62,9 +62,12 @@ void ClientThread::operator()() {
     }
     // Si se salio del ciclo porque se cerro el socket no se hace nada.
     catch(const SocketClosed & e) {}
-    // Si ocurrio un error se imprime el mensaje.
+    // Si ocurrio un status se imprime el mensaje.
     catch(const std::exception & e) {
         std::cerr << "Error: " << e.what() << std::endl;
+    }
+    catch(...) {
+        std::cerr << "Error desconocido" << std::endl;
     }
     // Ya no se corre mas.
     is_running = false;

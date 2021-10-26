@@ -4,11 +4,12 @@
 #include <utility>
 #include "server_acceptor_thread.h"
 #include "common_socket_closed.h"
+#include "common_invalid_parameter_addr.h"
 
 AcceptorThread::AcceptorThread(const Socket &socket_,
                                ProtectedBlockingQueueMap<std::string,
                                std::string> & queues_): socket(socket_),
-                               clients(), queues(queues_), thread() {
+                                                        clients(), queues(queues_), thread() {
     // Arranca el hilo.
     thread = std::thread(std::ref(*this));
 }
@@ -32,9 +33,11 @@ void AcceptorThread::operator()() {
 
     // Si se salio del ciclo porque se cerro el socket no se hace nada.
     catch(const SocketClosed & e) {}
-    // Si no se imprime un error.
     catch(const std::exception & e) {
         std::cerr << "Error: " << e.what() << std::endl;
+    }
+    catch(...){
+        std::cerr << "Error desconocido" << std::endl;
     }
 
     stopClients();
@@ -72,3 +75,4 @@ void AcceptorThread::join() {
 bool AcceptorThread::joinable() const {
     return thread.joinable();
 }
+
