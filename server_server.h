@@ -14,7 +14,7 @@
 /* Clase que ejecuta el server. Posee como atributo
  * un map protegido de colas de string. */
 class Server {
-    ProtectedMap<std::string, std::string> queues;
+    ProtectedBlockingQueueMap<std::string, std::string> queues;
 
 public:
     Server();

@@ -4,43 +4,59 @@
 #include <map>
 #include <utility>
 
-// TODO aclarar que es de blocking queues.
-
-template <class Key, class Val>
-class ProtectedMap {
+/* Clase template monitor de un map cuyo val es
+ * BlockingQueue. Key es la clase clave y BQVal
+ * es la clase que contiene la Blocking Queue. */
+template <class Key, class BQVal>
+class ProtectedBlockingQueueMap {
 private:
-    std::map<Key, BlockingQueue<Val>> map;
+    std::map<Key, BlockingQueue<BQVal>> map;
     std::mutex mutex;
 
 public:
-    ProtectedMap();
+    // Constructor.
+    ProtectedBlockingQueueMap();
 
-    BlockingQueue<Val> & at(const Key & key);
+    // Agrega un elemento al map.
+    void insert(const std::pair<Key, BlockingQueue<BQVal>> & pair);
 
-    void insert(const std::pair<Key, BlockingQueue<Val>> & pair);
-
+    // Debloquea todas las colas.
     void unlockAll();
+
+    /* Devuelve una referencia a la blocking queue correspondiente a key.
+     * (ver aclaracion en la definicion del metodo). */
+    BlockingQueue<BQVal> & at(const Key & key);
 };
 
 template<class Key, class Val>
-ProtectedMap<Key, Val>::ProtectedMap(): map(), mutex() {}
+ProtectedBlockingQueueMap<Key, Val>::ProtectedBlockingQueueMap(): map(), mutex() {}
 
+/* Este metodo esta protegido pero luego, la BlockingQueue podria (y lo va a hacer en
+ * el programa) ser modificada. Sin embargo, segun la documentacion:
+ * "Data races:
+ * The container is accessed (neither the const nor the non-const
+ * versions modify the container). The mapped value that is accessed may
+ * be modified by the caller. Concurrently accessing or modifying other elements is safe."
+ * Establece que el map en si no va a ser modificado y es seguro modificar o acceder
+ * otros elementos, por lo que no existe data race. Podria sin embargo ocurrir en el
+ * elemento devuelto, pero la clase BlockingQueue ya esta protegida por si misma. */
 template <class Key, class Val>
-BlockingQueue<Val> & ProtectedMap<Key, Val>::at(const Key & key) {
+BlockingQueue<Val> & ProtectedBlockingQueueMap<Key, Val>::at(const Key & key) {
     std::lock_guard<std::mutex> lock_guard(mutex);
     return map.at(key);
 }
 
 template<class Key, class Val>
-void ProtectedMap<Key, Val>::insert(const std::pair<Key,
+void ProtectedBlockingQueueMap<Key, Val>::insert(const std::pair<Key,
                                     BlockingQueue<Val>> & pair) {
     std::lock_guard<std::mutex> lock_guard(mutex);
-    map.insert(pair);
+    map.insert(std::move(pair));
 }
 
 template<class Key, class Val>
-void ProtectedMap<Key, Val>::unlockAll() {
+void ProtectedBlockingQueueMap<Key, Val>::unlockAll() {
     std::lock_guard<std::mutex> lock_guard(mutex);
+    // Itera los pares de key y val, y desbloquea las colas.
     for (auto it = map.begin(); it != map.end(); ++it)
         it->second.unlock();
 }

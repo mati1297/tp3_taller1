@@ -19,7 +19,7 @@ class ClientThread {
     std::atomic<bool> is_running;
     Socket peer;
     Protocol protocol;
-    ProtectedMap<std::string, std::string> & queues;
+    ProtectedBlockingQueueMap<std::string, std::string> & queues;
     std::thread thread;
 
     // Popea un mensaje en la cola queue_name.
@@ -34,7 +34,7 @@ class ClientThread {
 public:
     /* Constructor. Se le pasa un Socket por movimiento,
      * y una referencia al map protegido de string. */
-    ClientThread(Socket && peer_, ProtectedMap<std::string,
+    ClientThread(Socket && peer_, ProtectedBlockingQueueMap<std::string,
                  std::string> & queues_);
 
     /* Constructor por movimiento. Al momento de moverse,

@@ -9,7 +9,7 @@
 
 // TODO REVISAR CONST EN TODOS LADOS.
 
-ClientThread::ClientThread(Socket && peer_, ProtectedMap<std::string,
+ClientThread::ClientThread(Socket && peer_, ProtectedBlockingQueueMap<std::string,
                            std::string> & queues_):
                            keep_talking(false), is_running(false),
                            peer(std::move(peer_)), protocol(peer),

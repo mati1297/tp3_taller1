@@ -16,7 +16,7 @@
 class AcceptorThread {
     const Socket & socket;
     std::list<ClientThread> clients;
-    ProtectedMap<std::string, std::string> & queues;
+    ProtectedBlockingQueueMap<std::string, std::string> & queues;
     std::thread thread;
 
     // Detiene todos los clientes activos.
@@ -28,7 +28,7 @@ class AcceptorThread {
 public:
     /* Constructor. Se le pasa una ref al socket y otra al map de
      * colas. */
-    AcceptorThread(const Socket & socket, ProtectedMap<std::string,
+    AcceptorThread(const Socket & socket, ProtectedBlockingQueueMap<std::string,
             std::string> & queues_);
 
     AcceptorThread(const AcceptorThread &) = delete;
