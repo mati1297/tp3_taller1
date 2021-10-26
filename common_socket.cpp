@@ -135,7 +135,7 @@ size_t Socket::send(Packet & packet) const {
         if (bytes_sent == -1) {
             if (errno == EPIPE)
                 throw SocketClosed();
-            throw std::runtime_error("status al enviar datos");
+            throw std::runtime_error("error al enviar datos");
         }
         // Se contabiliza la cantida de bytes enviados.
         packet.addSentAmount(bytes_sent);
@@ -161,7 +161,7 @@ size_t Socket::receive(Packet & packet, size_t size) const{
             if (errno == EBADF) {
                 throw SocketClosed();
             }
-            throw std::runtime_error("status al recibir datos");
+            throw std::runtime_error("error al recibir datos");
         }
         // Se agregan los bytes recibidos al paquete.
         packet.addBytes(buffer.data(), bytes_recv);

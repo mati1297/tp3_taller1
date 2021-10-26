@@ -59,13 +59,12 @@ private:
     void setExit();
 
 public:
-    /* Constructor. Se le pasa el host y el port al que se debe
+    Client();
+
+    /* Ejecuta el server. Se le pasa el host y el port al que se debe
      * conectar el cliente.
      * Pre:
      *  -host y port deben apuntar a posiciones de memoria validas. */
-    Client();
-
-    // Ejecuta el server.
     void execute(const char * host, const char * port);
 };
 

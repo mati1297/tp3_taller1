@@ -18,9 +18,6 @@ class Server {
     Socket acceptor_socket;
 
 public:
-    /* Constructor.
-     * Pre:
-     *  -port debe apuntar a una direccion de memoria valida. */
     explicit Server();
 
     Server(const Server &r) = delete;
@@ -31,7 +28,9 @@ public:
 
     void operator=(Server &&) = delete;
 
-    // Ejecuta el server en el puerto indicado.
+    /* Ejecuta el server en el puerto indicado.
+     * Pre:
+            *  -port debe apuntar a una direccion de memoria valida. */
     void execute(const char * port);
 };
 

@@ -22,7 +22,7 @@ int main(int argc, char * argv[]) {
         Client client;
         client.execute(argv[1], argv[2]);
     }
-    // Se catchea e imprime el status.
+    // Se catchea e imprime el error
     catch(const InvalidParameterAddr & e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_BAD_PARAMETER;

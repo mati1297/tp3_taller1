@@ -20,7 +20,7 @@ int main(int argc, char * argv[]) {
         Server server;
         server.execute(argv[1]);
     }
-    // Se catchean excepciones y se imprime el status.
+    // Se catchean excepciones y se imprime el error.
     catch(const InvalidParameterAddr & e){
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_BAD_PARAMETER;
