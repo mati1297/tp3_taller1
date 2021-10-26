@@ -64,10 +64,17 @@ char Packet::getByte() {
     return array[read_++];
 }
 
-/*void Packet::addByte(char byte){
+void Packet::addByte(char byte){
     array.push_back(byte);
     size_++;
-}*/
+}
+
+void Packet::reset(){
+    array = std::vector<char>();
+    sent_ = 0;
+    size_ = 0;
+    read_ = 0;
+}
 
 
 

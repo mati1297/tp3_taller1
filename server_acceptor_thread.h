@@ -13,11 +13,11 @@ class AcceptorThread {
     Socket & socket;
     std::list<ClientThread> clients;
     std::list<std::thread> threads;
-    ProtectedMap<std::string, BlockingQueue<std::string>> & queues;
+    ProtectedMap<std::string, std::string> & queues;
 
 public:
     AcceptorThread(Socket & socket, ProtectedMap<std::string,
-            BlockingQueue<std::string>> & queues_);
+            std::string> & queues_);
 
     ~AcceptorThread() = default;
 

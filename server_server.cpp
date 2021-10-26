@@ -8,15 +8,11 @@
 Server::Server(): queues() {}
 
 void Server::execute(const char * port) {
-    std::cout << "creo el socket" << std::endl;
     Socket socket;
-    std::cout << "bindeo el socket" << std::endl;
-    socket.bindAndListen(port, 1);
+    socket.bindAndListen(port, 8);
 
-    std::cout << "creo el functor aceptador" << std::endl;
     AcceptorThread acceptor_thread(socket, queues);
 
-    std::cout << "lazo el thread" << std::endl;
     std::thread thread(std::ref(acceptor_thread));
 
     std::string input;
@@ -25,15 +21,12 @@ void Server::execute(const char * port) {
     while (true) {
         // TODO mostrar mensaje si otra letra se ingresa
         std::cin >> input;
-        break;
+        if (input == "q")
+            break;
     }
-    std::cout << "lei una " << input << std::endl;
-
-    std::cout << "paso a cerrar" << std::endl;
     socket.close();
-    std::cout << "cerre el socket" << std::endl;
+    queues.unlockAll();
     thread.join();
-    std::cout << "joinee el thread aceptador" << std::endl;
 }
 
 

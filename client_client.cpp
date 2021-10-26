@@ -10,7 +10,7 @@ Client::Client(const char * host, const char * port):
                functors {{"push", &cmd_send_push}, {"pop", &cmd_send_pop},
                          {"define", &cmd_send_define_queue},
                          {"exit", &cmd_exit}}, exit_flag(false) {
-    //socket.connect(host, port);
+    socket.connect(host, port);
 }
 
 
@@ -21,8 +21,6 @@ void Client::execute() {
         std::istringstream iss(line);
         std::string command, queue_name, message;
         iss >> command >> queue_name >> message;
-
-        std::cout << "soy un cliente arrancando" << std::endl;
 
         // TODO VALIDAR ESTO LO DE MAP CON UN TRY CATCH?
         try {
@@ -38,7 +36,6 @@ void Client::execute() {
         }
 
         if (exit_flag) {
-            std::cout << "soy un cliente cerrandose" << std::endl;
             return;
         }
     }
@@ -53,8 +50,8 @@ void Client::CommandSendPopMessage::operator()(Client &client,
                     const std::string &message) const {
     if (queue_name.empty())
         throw MissingParameter("nombre de la cola faltante");
-    //client.protocol.sendPopMessage(queue_name);
-    //std::cout << client.protocol.receiveAndUnpackText() << std::endl;
+    client.protocol.sendPopMessage(queue_name);
+    std::cout << client.protocol.receiveAndUnpackText() << std::endl;
 }
 
 void Client::CommandSendPushMessage::operator()(Client &client,
@@ -63,14 +60,14 @@ void Client::CommandSendPushMessage::operator()(Client &client,
         throw MissingParameter("nombre de la cola faltante");
     if (message.empty())
         throw MissingParameter("mensaje faltante");
-    //client.protocol.sendPushMessage(queue_name, message);
+    client.protocol.sendPushMessage(queue_name, message);
 }
 
 void Client::CommandDefineQueueMessage::operator()(Client &client,
         const std::string &queue_name, const std::string &message) const {
     if (queue_name.empty())
         throw MissingParameter("nombre de la cola faltante");
-    //client.protocol.sendDefineQueue(queue_name);
+    client.protocol.sendDefineQueue(queue_name);
 }
 
 void Client::CommandExit::operator()(Client &client,

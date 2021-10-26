@@ -10,7 +10,7 @@
 
 class Server {
     // TODO Hacerle monitor a esto.
-    ProtectedMap<std::string, BlockingQueue<std::string>> queues;
+    ProtectedMap<std::string, std::string> queues;
 
 
 public:

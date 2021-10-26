@@ -14,17 +14,17 @@ class ClientThread {
     std::atomic<bool> is_running;
     Socket peer;
     Protocol protocol;
-    ProtectedMap<std::string, BlockingQueue<std::string>> & queues;
-/*
+    ProtectedMap<std::string, std::string> & queues;
+
     void popMessage(const std::string &queue_name);
 
     void pushMessage(const std::string &queue_name, const std::string &message);
 
     void defineQueue(const std::string &queue_name);
-*/
+
 public:
     ClientThread(Socket && peer_, ProtectedMap<std::string,
-                 BlockingQueue<std::string>> & queues_);
+                 std::string> & queues_);
 
     ClientThread(ClientThread && orig) noexcept;
 
@@ -36,9 +36,9 @@ public:
 
     void operator()();
 
-    /*bool isDead();
+    bool isDead();
 
-    void stop();*/
+    void stop();
 };
 
 

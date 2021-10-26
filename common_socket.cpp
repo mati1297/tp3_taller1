@@ -52,8 +52,6 @@ void Socket::connect(const char * host, const char * port) {
 
     int optval = 1;
     setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int));
-    std::cerr << fd << std::endl;
-    std::cerr << "sali de connect" << std::endl;
 }
 
 void Socket::bindAndListen(const char * port, uint8_t pend_conn) {
@@ -81,7 +79,7 @@ void Socket::bindAndListen(const char * port, uint8_t pend_conn) {
     if (fd == INVALID_FILE_DESCRIPTOR)
         throw std::runtime_error("fallo al bindear el socket");
 
-    if (listen(fd, 0))
+    if (listen(fd, pend_conn))
         throw std::runtime_error("fallo al poner el puerto en escucha");
 }
 
@@ -135,17 +133,16 @@ size_t Socket::receive(Packet & packet, size_t size){
     if (fd == INVALID_FILE_DESCRIPTOR)
         throw std::runtime_error("el socket tiene un fd invalido");
     std::vector<char> buffer(size);
+    packet.reset();
     while (packet.size() < size) {
         // TODO ver si hacer refactor de esto
         //  o dejarlo asi (tema encapsulamiento).
         ssize_t bytes_recv = recv(fd, buffer.data(), buffer.size(), 0);
         if (bytes_recv == 0) {
-            fd = INVALID_FILE_DESCRIPTOR;
             throw SocketClosed();
         }
         if (bytes_recv == -1) {
             if (errno == EBADF) {
-                fd = INVALID_FILE_DESCRIPTOR;
                 throw SocketClosed();
             }
             throw std::runtime_error("error al recibir datos");
@@ -166,4 +163,5 @@ void Socket::close(){
         fd = INVALID_FILE_DESCRIPTOR;
     }
 }
+
 

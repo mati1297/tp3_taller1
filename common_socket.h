@@ -41,6 +41,8 @@ public:
     size_t receive(Packet & packet, size_t size);
 
     void close();
+
+    void printfd();
 };
 
 
