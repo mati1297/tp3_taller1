@@ -10,14 +10,14 @@
 
 // TODO CAMBIAR NOMBREA ESTE Y CLIENTE POR ALGO QUE NO SEA THREAD
 class AcceptorThread {
-    const Socket & socket;
+    Socket & socket;
     std::list<ClientThread> clients;
     std::list<std::thread> threads;
-    ProtectedMap<std::string, BlockingQueue<std::string>> & queues;
+    ProtectedMap<std::string, std::string> & queues;
 
 public:
-    AcceptorThread(const Socket & socket, ProtectedMap<std::string,
-            BlockingQueue<std::string>> & queues_);
+    AcceptorThread(Socket & socket, ProtectedMap<std::string,
+            std::string> & queues_);
 
     ~AcceptorThread() = default;
 

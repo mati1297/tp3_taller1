@@ -69,6 +69,13 @@ void Packet::addByte(char byte){
     size_++;
 }
 
+void Packet::reset(){
+    array = std::vector<char>();
+    sent_ = 0;
+    size_ = 0;
+    read_ = 0;
+}
+
 
 
 

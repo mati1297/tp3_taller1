@@ -28,13 +28,16 @@ void Client::execute() {
         }
         catch(const MissingParameter & e){
             std::cerr << "Error: " << e.what() << ". Reintenta." << std::endl;
+            throw;
         }
         catch(const std::out_of_range & e) {
             std::cerr << "Error: el comando no existe. Reintenta." << std::endl;
+            throw;
         }
 
-        if (exit_flag)
+        if (exit_flag) {
             return;
+        }
     }
 }
 

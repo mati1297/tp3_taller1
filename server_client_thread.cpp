@@ -10,7 +10,7 @@
 // TODO REVISAR CONST EN TODOS LADOS.
 
 ClientThread::ClientThread(Socket && peer_, ProtectedMap<std::string,
-                           BlockingQueue<std::string>> & queues_):
+                           std::string> & queues_):
                            keep_talking(true), is_running(true),
                            peer(std::move(peer_)), protocol(peer),
                            queues(queues_) {}
@@ -62,7 +62,6 @@ void ClientThread::operator()() {
         std::cerr << "Error: " << e.what() << std::endl;
     }
     is_running = false;
-    peer.close();
 }
 
 // TODO TENGO QUE DESTRUIR LOS CLIENTES.
@@ -106,7 +105,7 @@ void ClientThread::pushMessage(const std::string &queue_name,
 void ClientThread::defineQueue(const std::string &queue_name) {
     BlockingQueue<std::string> new_queue;
     queues.insert(std::pair<std::string, BlockingQueue<std::string>>
-                                        (queue_name, std::move(new_queue)));
+                          (queue_name, std::move(new_queue)));
 }
 
 

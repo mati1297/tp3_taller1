@@ -35,6 +35,7 @@ void Socket::connect(const char * host, const char * port) {
 
     for (ptr = result; ptr; ptr = ptr->ai_next){
         int skt = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+
         if (skt != -1){
             if (::connect(skt, ptr->ai_addr, ptr->ai_addrlen)) {
                 ::close(skt);
@@ -83,21 +84,22 @@ void Socket::bindAndListen(const char * port, uint8_t pend_conn) {
 }
 
 Socket Socket::accept() const {
+    if (fd == INVALID_FILE_DESCRIPTOR)
+        throw std::runtime_error("el socket tiene un fd invalido");
     int fd_peer = ::accept(fd, nullptr, nullptr);
     if (fd_peer == -1) {
         if (errno == EBADF || errno == EINVAL)
             throw SocketClosed();
         throw std::runtime_error("fallo al aceptar el peer");
     }
-    Socket peer(fd_peer);
-    return peer;
+    return Socket(fd_peer);
 }
 
 void Socket::getAddressInfo(struct addrinfo ** result, const char * host,
                             const char * port) {
     // TODO crear clase para addrinfo?.
     struct addrinfo hints{};
-    ::memset(&hints, 0, sizeof(struct addrinfo));
+    //::memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     if (host == nullptr)
@@ -110,6 +112,8 @@ void Socket::getAddressInfo(struct addrinfo ** result, const char * host,
 }
 
 size_t Socket::send(Packet & packet) const {
+    if (fd == INVALID_FILE_DESCRIPTOR)
+        throw std::runtime_error("el socket tiene un fd invalido");
     while (packet.pendingToSentSize() > 0) {
         ssize_t bytes_sent = ::send(fd, packet.getPendingToSent(),
                                     packet.pendingToSentSize(), MSG_NOSIGNAL);
@@ -125,17 +129,22 @@ size_t Socket::send(Packet & packet) const {
     return packet.sent();
 }
 
-size_t Socket::receive(Packet & packet, size_t size) const{
+size_t Socket::receive(Packet & packet, size_t size){
+    if (fd == INVALID_FILE_DESCRIPTOR)
+        throw std::runtime_error("el socket tiene un fd invalido");
     std::vector<char> buffer(size);
+    packet.reset();
     while (packet.size() < size) {
         // TODO ver si hacer refactor de esto
         //  o dejarlo asi (tema encapsulamiento).
         ssize_t bytes_recv = recv(fd, buffer.data(), buffer.size(), 0);
-        if (bytes_recv == 0)
+        if (bytes_recv == 0) {
             throw SocketClosed();
+        }
         if (bytes_recv == -1) {
-            if (errno == EBADF)
+            if (errno == EBADF) {
                 throw SocketClosed();
+            }
             throw std::runtime_error("error al recibir datos");
         }
         // TODO hacer que reciba vector?
@@ -154,4 +163,5 @@ void Socket::close(){
         fd = INVALID_FILE_DESCRIPTOR;
     }
 }
+
 

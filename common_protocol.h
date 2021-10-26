@@ -9,7 +9,7 @@
 #define POP_CHAR 'o'
 
 class Protocol {
-    const Socket & socket;
+    Socket & socket;
 
 public:
     typedef enum {
@@ -19,7 +19,7 @@ public:
         NO_CMD
     } Command;
 
-    explicit Protocol(const Socket & socket_);
+    explicit Protocol(Socket & socket_);
 
     Protocol(const Protocol &) = delete;
 

@@ -39,6 +39,8 @@ public:
     void getBytes(std::string &out, const uint32_t &size);
 
     void getBytes(uint16_t &out);
+
+    void reset();
 };
 
 

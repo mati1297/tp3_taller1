@@ -5,8 +5,8 @@
 #include "server_acceptor_thread.h"
 #include "common_socket_closed.h"
 
-AcceptorThread::AcceptorThread(const Socket &socket_, ProtectedMap<std::string,
-        BlockingQueue<std::string>> & queues_): socket(socket_), clients(),
+AcceptorThread::AcceptorThread(Socket &socket_, ProtectedMap<std::string,
+        std::string> & queues_): socket(socket_), clients(),
                                                 threads(), queues(queues_) {}
 
 
@@ -37,13 +37,16 @@ void AcceptorThread::operator()() {
 
             auto iterclients = clients.begin();
             auto iterthreads = threads.begin();
-            for (; iterclients != clients.end() && iterthreads != threads.end();
-            ) {
+            for (; iterclients != clients.end() &&
+                   iterthreads != threads.end();) {
                 if (iterclients->isDead()) {
                     if (iterthreads->joinable())
                         iterthreads->join();
                     iterthreads = threads.erase(iterthreads);
                     iterclients = clients.erase(iterclients);
+                } else {
+                    ++iterthreads;
+                    ++iterclients;
                 }
                 else{
                     ++iterthreads;
@@ -52,7 +55,13 @@ void AcceptorThread::operator()() {
             }
         }
     }
-    catch(const SocketClosed & e){}
+    
+    catch(const SocketClosed & e){
+        // TODO Print
+    }
+    catch(const std::exception & e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
 
     catch(const std::exception & e){
         std::cerr << "Error: " << e.what() << std::endl;
