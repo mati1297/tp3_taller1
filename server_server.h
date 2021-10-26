@@ -15,9 +15,13 @@
  * un map protegido de colas de string. */
 class Server {
     ProtectedBlockingQueueMap<std::string, std::string> queues;
+    Socket acceptor_socket;
 
 public:
-    Server();
+    /* Constructor.
+     * Pre:
+     *  -port debe apuntar a una direccion de memoria valida. */
+    Server(const char * port);
 
     Server(const Server &r) = delete;
 
@@ -27,10 +31,8 @@ public:
 
     void operator=(Server &&) = delete;
 
-    /* Ejecuta el server en el puerto indicado.
-     * Pre:
-     *  -port debe apuntar a una direccion de memoria valida. */
-    void execute(const char * port);
+    // Ejecuta el server en el puerto indicado.
+    void execute();
 };
 
 

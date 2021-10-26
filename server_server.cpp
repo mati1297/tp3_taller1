@@ -6,13 +6,12 @@
 #include "server_acceptor_thread.h"
 #include "common_invalid_parameter_addr.h"
 
-Server::Server(): queues() {}
-
-void Server::execute(const char * port) {
-    // Se crea, bindea y se deja en escucha el socket.
-    Socket acceptor_socket;
+Server::Server(const char * port): queues(), acceptor_socket() {
+    // Se bindea y se deja en escucha el socket.
     acceptor_socket.bindAndListen(port, PEND_CONNECTIONS);
+}
 
+void Server::execute() {
     // Se lanza el hilo aceptador.
     AcceptorThread acceptor_thread(acceptor_socket, queues);
 
