@@ -18,7 +18,7 @@ class Server {
     Socket acceptor_socket;
 
 public:
-    explicit Server();
+    Server();
 
     Server(const Server &r) = delete;
 
