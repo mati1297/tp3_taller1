@@ -14,6 +14,7 @@ class AcceptorThread {
     std::list<ClientThread> clients;
     std::list<std::thread> threads;
     ProtectedMap<std::string, std::string> & queues;
+    std::thread thread;
 
 public:
     AcceptorThread(Socket & socket, ProtectedMap<std::string,
@@ -30,6 +31,12 @@ public:
     AcceptorThread & operator=(AcceptorThread &&) = delete;
 
     void operator()();
+
+    void join();
+
+    bool joinable();
+
+    void run();
 };
 
 

@@ -117,7 +117,6 @@ void Socket::getAddressInfo(struct addrinfo ** result, const char * host,
         hints.ai_flags = AI_PASSIVE;
     int s = getaddrinfo(host, port, &hints, result);
     if (s) {
-        freeaddrinfo(*result);
         throw std::runtime_error("no se pudo obtener la direccion al conectar");
     }
 }

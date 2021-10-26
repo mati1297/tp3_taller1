@@ -8,6 +8,8 @@
 #include "common_protocol.h"
 #include "server_protected_map.h"
 
+#define EXIT_CMD "q"
+
 class Server {
     // TODO Hacerle monitor a esto.
     ProtectedMap<std::string, std::string> queues;

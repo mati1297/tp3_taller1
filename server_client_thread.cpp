@@ -13,14 +13,14 @@ ClientThread::ClientThread(Socket && peer_, ProtectedMap<std::string,
                            std::string> & queues_):
                            keep_talking(true), is_running(true),
                            peer(std::move(peer_)), protocol(peer),
-                           queues(queues_) {}
+                           queues(queues_), thread() {}
 
 // TODO revisar safety
 
 ClientThread::ClientThread(ClientThread &&orig) noexcept:
                            keep_talking(true), is_running(true),
                            peer(std::move(orig.peer)), protocol(peer),
-                           queues(orig.queues) {
+                           queues(orig.queues), thread(std::move(orig.thread)) {
     if (orig.keep_talking)
         keep_talking = true;
     else
@@ -33,6 +33,9 @@ ClientThread::ClientThread(ClientThread &&orig) noexcept:
     orig.is_running = false;
 }
 
+void ClientThread::run(){
+    thread = std::thread(std::ref(*this));
+}
 
 void ClientThread::operator()() {
     try {
@@ -108,6 +111,13 @@ void ClientThread::defineQueue(const std::string &queue_name) {
                           (queue_name, std::move(new_queue)));
 }
 
+void ClientThread::join() {
+    thread.join();
+}
+
+bool ClientThread::joinable() {
+    return thread.joinable();
+}
 
 
 

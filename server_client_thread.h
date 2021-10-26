@@ -15,6 +15,7 @@ class ClientThread {
     Socket peer;
     Protocol protocol;
     ProtectedMap<std::string, std::string> & queues;
+    std::thread thread;
 
     void popMessage(const std::string &queue_name);
 
@@ -39,6 +40,12 @@ public:
     bool isDead();
 
     void stop();
+
+    void join();
+
+    bool joinable();
+
+    void run();
 };
 
 

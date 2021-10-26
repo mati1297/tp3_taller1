@@ -12,21 +12,20 @@ void Server::execute(const char * port) {
     socket.bindAndListen(port, 8);
 
     AcceptorThread acceptor_thread(socket, queues);
+    acceptor_thread.run();
 
-    std::thread thread(std::ref(acceptor_thread));
-
-    std::string input;
-
-    // TODO Refactor (aca o en el otro)
     while (true) {
-        // TODO mostrar mensaje si otra letra se ingresa
+        std::string input;
         std::cin >> input;
-        if (input == "q")
+        if (input != EXIT_CMD)
+            std::cerr << "Incorrecto. Para cerrar ingresa " << EXIT_CMD << std::endl;
+        else
             break;
     }
     socket.shutdownAndClose();
     queues.unlockAll();
-    thread.join();
+    if(acceptor_thread.joinable())
+        acceptor_thread.join();
 }
 
 
