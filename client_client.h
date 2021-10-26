@@ -52,10 +52,12 @@ private:
     bool exit_flag;
 
     // Lee una linea por stdin y la devuelve en distintas strings.
-    void readLine(std::string &command, std::string &queue_name, std::string &message);
+    void readLine(std::string &command, std::string &queue_name,
+                  std::string &message);
 
     // Setea el flag de exit.
     void setExit();
+
 public:
     /* Constructor. Se le pasa el host y el port al que se debe
      * conectar el cliente.

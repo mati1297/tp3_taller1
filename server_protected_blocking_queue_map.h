@@ -1,5 +1,5 @@
-#ifndef TP3_TALLER1_SERVER_PROTECTED_MAP_H
-#define TP3_TALLER1_SERVER_PROTECTED_MAP_H
+#ifndef TP3_TALLER1_SERVER_PROTECTED_BLOCKING_QUEUE_MAP_H
+#define TP3_TALLER1_SERVER_PROTECTED_BLOCKING_QUEUE_MAP_H
 
 #include <map>
 #include <utility>
@@ -29,7 +29,8 @@ public:
 };
 
 template<class Key, class Val>
-ProtectedBlockingQueueMap<Key, Val>::ProtectedBlockingQueueMap(): map(), mutex() {}
+ProtectedBlockingQueueMap<Key, Val>::ProtectedBlockingQueueMap(): map(),
+                                                                  mutex() {}
 
 /* Este metodo esta protegido pero luego, la BlockingQueue podria (y lo va a hacer en
  * el programa) ser modificada. Sin embargo, segun la documentacion:
@@ -61,4 +62,4 @@ void ProtectedBlockingQueueMap<Key, Val>::unlockAll() {
         it->second.unlock();
 }
 
-#endif //TP3_TALLER1_SERVER_PROTECTED_MAP_H
+#endif //TP3_TALLER1_SERVER_PROTECTED_BLOCKING_QUEUE_MAP_H

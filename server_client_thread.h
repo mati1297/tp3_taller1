@@ -7,7 +7,7 @@
 #include "common_socket.h"
 #include "common_protocol.h"
 #include "server_blocking_queue.h"
-#include "server_protected_map.h"
+#include "server_protected_blocking_queue_map.h"
 
 /* Clase wrapper del thread de cliente, ejecuta
  * la comunicacion individual con cada cliente.

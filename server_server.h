@@ -6,7 +6,7 @@
 #include <map>
 #include "server_blocking_queue.h"
 #include "common_protocol.h"
-#include "server_protected_map.h"
+#include "server_protected_blocking_queue_map.h"
 
 #define EXIT_CMD "q"
 #define PEND_CONNECTIONS 8

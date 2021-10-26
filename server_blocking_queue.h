@@ -27,7 +27,7 @@ public:
     BlockingQueue(const BlockingQueue<T> & orig);
 
     // Constructor por movimiento.
-    BlockingQueue(BlockingQueue<T> && orig) noexcept ;
+    BlockingQueue(BlockingQueue<T> && orig) noexcept;
 
     // Permite agregar un elemento al final de la cola.
 	void push(const T & new_element);
