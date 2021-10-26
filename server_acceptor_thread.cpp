@@ -6,8 +6,8 @@
 #include "common_socket_closed.h"
 
 AcceptorThread::AcceptorThread(Socket &socket_, ProtectedMap<std::string,
-        std::string> & queues_): socket(socket_), clients(),
-                                                threads(), queues(queues_), thread() {
+        std::string> & queues_): socket(socket_), clients(), threads(),
+        queues(queues_), thread() {
     // Arranca el hilo.
     thread = std::thread(std::ref(*this));
 }

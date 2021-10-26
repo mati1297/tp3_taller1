@@ -17,13 +17,14 @@ void Server::execute(const char * port) {
         std::string input;
         std::cin >> input;
         if (input != EXIT_CMD)
-            std::cerr << "Incorrecto. Para cerrar ingresa " << EXIT_CMD << std::endl;
+            std::cerr << "Incorrecto. Para cerrar ingresa "
+                      << EXIT_CMD << std::endl;
         else
             break;
     }
     socket.shutdownAndClose();
     queues.unlockAll();
-    if(acceptor_thread.joinable())
+    if (acceptor_thread.joinable())
         acceptor_thread.join();
 }
 
