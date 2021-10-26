@@ -48,10 +48,6 @@ void AcceptorThread::operator()() {
                     ++iterthreads;
                     ++iterclients;
                 }
-                else{
-                    ++iterthreads;
-                    ++iterclients;
-                }
             }
         }
     }
@@ -60,10 +56,6 @@ void AcceptorThread::operator()() {
         // TODO Print
     }
     catch(const std::exception & e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
-
-    catch(const std::exception & e){
         std::cerr << "Error: " << e.what() << std::endl;
     }
 
