@@ -39,7 +39,6 @@ void Packet::getBytes(std::string & out, const uint32_t & size) {
 void Packet::getBytes(uint16_t & out){
     if ((size_ - read_) < 2)
         throw std::invalid_argument("se piden mas bytes que los existentes");
-    // TODO ver esto si hay tiempo.
     uint16_t byte0 = getByte();
     uint16_t byte1 = getByte();
     out = (byte1 << 8) | (byte0 >> 8);

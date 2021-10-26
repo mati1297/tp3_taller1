@@ -11,14 +11,18 @@ El ejercicio consistió en el armado de un mini *Middleware*. En este, se tiene 
 
 ### Diagrama de flujo
 
-En el siguiente diagrama de flujo se puede ver a grandes rasgos como es el funcionamiento del programa.
+En el siguiente diagrama de flujo se puede ver a grandes rasgos como es el funcionamiento del server. Se muestra donde comienzan y terminan los hilos y cuales son las condiciones.
+
+<p align=center>
+    <img src="images/server_flowchart.png" alt="server_flowchart"/>
+</p>
 
 
 ## Clases
 
 El servidor se ejecuta a través de la clase principal ```Server```, el cual posee un método principal ```execute()```, el cual es ejecutado por el ```main``` correspondiente a server. Esta clase bindea y deja en escucha el ```Socket```, para luego lanzar el ```AccepterThread``` y queda en espera de que se ingrese la letra 'q' por ```stdin```. Cuando esto ocurra, cerrará el ```Socket```, con lo que morirá el hilo aceptador y luego le hará ```join```, para luego terminar la ejecución.
 
-El hilo aceptador, ```AccepterThread``` es un wrapper de ```std::thread```, el cual se encarga de aceptar conexiones entrantes, y lanzar por cada una un hilo de cliente ```ClientThread```, que atenderá a los distintos clientes. ```AccepterThread``` quedara bloqueado en un ```accept()``` de ```Socket```, cuando acepte una nueva conexión, revisará la lista de clientes abiertos, y si hay alguno muerto, lo eliminara de su lista y joineará su *thread*. Cuando el *main thread* cierre el socket que acepta, este hilo iterará por todos sus clientes y los ira deteniendo (cerrando sus respectivos sockets), y luego los joineará, para terminar su ejecución.
+El hilo aceptador, ```AcceptorThread``` es un wrapper de ```std::thread```, el cual se encarga de aceptar conexiones entrantes, y lanzar por cada una un hilo de cliente ```ClientThread```, que atenderá a los distintos clientes. ```AccepterThread``` quedara bloqueado en un ```accept()``` de ```Socket```, cuando acepte una nueva conexión, revisará la lista de clientes abiertos, y si hay alguno muerto, lo eliminara de su lista y joineará su *thread*. Cuando el *main thread* cierre el socket que acepta, este hilo iterará por todos sus clientes y los ira deteniendo (cerrando sus respectivos sockets), y luego los joineará, para terminar su ejecución.
 
 Los hilos de clientes, ```ClientThread```, se ocupan de atender a los clientes, estos quedan bloqueados en ```receive``` de su ```Socket```, esperando a que lleguen instrucciones. Si el hilo aceptador llama a su metodo ```stop()```, este cerrará el socket, y seteará una variable ```std::atomic keep_talking``` en ```false```, de manera tal que el hilo se detendrá.
 
@@ -41,3 +45,11 @@ Para la cola se utiliza la el template ```BlockingQueue```, en este caso con ```
 La cola poseé un método ```unlock()```, el cual permite forzar a que se destrabe la cola. Este método es llamado al cerrar el server. Y se implementó ya que podría ocurrir el caso en que, el server se cierre mientras que un cliente está esperando un *pop*. Si esto ocurriese, nunca se podría cerrar el hilo ya que quedaría un *deadlock*.
 
 Para el almacenamiento de las colas se utiliza el template ```ProtectedMapBlockingQueue```, el cual es un monitor de ```std::map``` el cual en en este caso usa como *key* ```std::string```. Este posee métodos para insertar y obtener las colas. Además de un metodo ```unlockAll()```, para destrabar todas las colas que posee a la vez.
+
+### Diagrama de clases
+
+A continuación se puede ver un diagrama de clases donde se observan las relaciones y dependencias de las distintas clases del programa.
+
+<p align=center>
+    <img src="images/class_diagram.png" alt="class_diagram"/>
+</p>
